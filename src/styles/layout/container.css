@@ -1,0 +1,12 @@
+.container {
+    display: grid;
+    grid-template-columns: 220px calc(100% - 220px);
+    grid-template-rows: 48px calc(100vh - 48px);
+}
+
+.main {
+    display: flex;
+    flex-direction: row;
+    height: calc(100vh - 48px);
+    width: 100%;
+}

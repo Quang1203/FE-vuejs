@@ -1,0 +1,25 @@
+.validation-tooltip {
+    position: absolute;
+    right: -79%;
+    top: 3px;
+    background-color: #fa3939;
+    color: #fff;
+    border-radius: 4px;
+    height: 28px;
+    text-align: center;
+    line-height: 28px;
+    padding-left: 8px;
+    padding-right: 8px;
+    z-index: 2;
+}
+
+.validation-tooltip::before {
+    position: absolute;
+    z-index: 1;
+    content: "";
+    border-style: solid;
+    border-width: 13px 12px;
+    border-color: transparent #fa3939 transparent transparent;
+    left: -19px;
+    top: 1px;
+}

@@ -1,0 +1,85 @@
+﻿.grid {
+    width: 1200px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.grid__full-width {
+    width: 100%;
+}
+
+.grid__row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -5px;
+    margin-right: -5px;
+}
+
+/* Test */
+
+.grid_column-2 {
+    padding-left: 5px;
+    padding-right: 5px;
+    width: 16.6667%;
+}
+
+.grid_column-2-4 {
+    padding-left: 5px;
+    padding-right: 5px;
+    width: 20%;
+}
+
+.grid_column-10 {
+    padding-left: 5px;
+    padding-right: 5px;
+    width: 83.3333%;
+}
+
+/* common table */
+
+.tableFixHead {
+    overflow-y: auto;
+    min-width:100%;
+}
+
+    .tableFixHead thead th {
+        position: sticky;
+        text-align: center;
+        top: 0;
+    }
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    border-color: #d9d9d9;
+    border-style: solid;
+    border-left: 0px !important;
+    border-right: 0px;
+    border-top: 0px;
+}
+
+    table thead tr th {
+        font-weight: normal;
+    }
+
+th, td {
+    padding: 2px;
+    border-right: 1px solid #d9d9d9;
+}
+
+th {
+    background: #ededed;
+    outline: 0;
+    color: #000;
+    white-space: nowrap;
+    padding:5px;
+}
+
+    table tbody tr:hover {
+        background-color: #bfd1fe;
+        cursor:pointer
+    }
+
+    table tbody tr.row-selected {
+        background-color: #a4befc;
+    }

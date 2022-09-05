@@ -1,0 +1,26 @@
+.button-small.btn-selectDelete {
+    position: relative;
+    text-align: center;
+    border: 1px solid #ccc;
+    height: 32px;
+    width: 32px;
+}
+
+.showDeleteChose {
+    position: fixed;
+    background-color: #fff;
+    width: 110px;
+    height: 38px;
+    right: 2.5%;
+    top: 14.5%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    line-height: 38px;
+    z-index: 2;
+    box-shadow: 0 1px 2px #e0e0e0e4;
+}
+
+#btnDeleteChose {
+    margin-right: 8px;
+}
+

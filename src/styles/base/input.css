@@ -1,0 +1,64 @@
+﻿.input {
+    /* position: relative; */
+    height: 32px;
+    border-radius: 4px;
+    outline: none;
+    box-sizing: border-box;
+    border: 1px solid #bbbbbb;
+    padding-left: 4px;
+    padding-right: 4px;
+    min-width: 100px;
+    font-family: MISA Fonts;
+}
+
+textarea {
+    border-radius: 4px;
+    outline: none;
+    box-sizing: border-box;
+    border: 1px solid #bbbbbb;
+    padding: 16px;
+    width: 100%;
+}
+
+.input:focus,
+textarea:focus,
+select:focus {
+    border-color: #019160;
+}
+
+.input__icon {
+    position: relative;
+    background-size: 28px 28px;
+    background-repeat: no-repeat;
+    background-position-y: center;
+    background-position-x: 96%;
+    padding-left: 16px;
+    padding-right: 40px;
+}
+
+.input.input__icon {
+    position: relative;
+}
+
+.input.input__icon::after{
+    content: "";
+    display: block;
+    position: absolute;
+    border-right: 10px solid #ccc;
+    height: 22px;
+    right: -16px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.input__icon--search {
+    background-image: url(../../assets/icon/Ic_seerch.png);
+}
+
+.input--required {
+    color: rgba(255, 0, 0, 0.955);
+}
+
+.input__error--required {
+    border: 1px solid rgba(255, 0, 0, 0.955);
+}
