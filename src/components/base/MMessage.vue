@@ -5,7 +5,7 @@
             <div class="dialog__header title" style="padding:20px 0 12px 24px; color: var(--text-color) ;">Thông báo</div>
             <div class="dialog__body" v-for="(item) in validates" :key="item">
                 <div class="dialog__msg-item">
-                    {{item}} không được phép để trống 
+                    {{item}} 
                 </div>
             </div>
             <div class="dialog__footer">

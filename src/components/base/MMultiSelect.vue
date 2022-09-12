@@ -1,12 +1,23 @@
 <template>
-    <div class="dropdown" style="flex:1" 
-    :style="{ width: width || '200px' }" tabindex="6">
-        <div @click="toggleOptions"  class="dropdown-select" style="height: fit-content; box-sizing: border-box; min-height: 32px;" >
+    <div @keypress.enter="toggleOptions" class="dropdown" style="flex:1" 
+    :style="{ width: width || '200px' }" tabindex="6"
+    >
+    <!-- @focusout="handleFocusOut" -->
+        <div class="dropdown-select" style="height: fit-content; box-sizing: border-box; min-height: 32px;"
+            @click="toggleOptions"  
+            @keypress.enter="toggleOptions"   
+            >
             <div  class="select--multi" 
             style=" height: fit-content; width: 100%; "
             >
                 <!-- v-model="optionSelected" -->
-                <div style="box-sizing: border-box;" class="chip" v-for="(item) in checkedItem" :key="item[idName]">                
+                <div v-if="(checkedItem.length == items.length)" style="box-sizing: border-box;" class="chip">                
+                        <div class="chip__content">
+                        Tất cả
+                        <i @click="removeAllOption()" class="fa-solid fa-xmark"></i>
+                    </div>
+                </div>
+                <div v-else style="box-sizing: border-box;" class="chip" v-for="(item) in checkedItem" :key="item[idName]">                
                         <div class="chip__content">
                         {{item[valueName]}}
                         <i :id="item[idName]" @click="removeOption(item)" class="fa-solid fa-xmark"></i>
@@ -33,7 +44,8 @@
                 <input
                 class="checkbox-item" type="checkbox"  style="margin-left: 2px ;"
                 :value="item" 
-                :checked="checkedItem.includes(item[idName])" 
+                :checked="checkedItem.includes(item)" 
+                @change="handleOptionClicked"
                 v-model="checkedItem" >
                 {{ item[valueName] }}
             </div>
@@ -45,59 +57,69 @@
 <script>
 export default {
     name: "MMultiSelect ",
-    props: ["idName", "valueName", "url", "width", "idValue","displayValue"],
+    props: ["idName", "valueName", "url", "width", "idValue","displayValue", "initialValue"],
     data() {
         return {
             isShowOptions: false,
             items: [],
             optionSelected:[],
-            nameOptionSelected:[],
-            idOptionSelected:[],
             selectedItemID:[],
             checkedItem: [],
-            isCheckAll: false,
+            isCheckAll: null,
         }
     },
     created() {
         if (this.url) {
-            this.getData();
-            // this.optionSelected = this.initialValue ;
-            // this.selectedItemID.push(this.optionSelected[this.idName]);
-            // console.log(this.initialValue);
+            fetch(this.url,{method:"GET"})
+            .then(res=>res.json())
+            .then(res=>{
+                this.items = res;
+                this.checkedItem = this.initialValue;
+                this.selectedItemID = this.checkedItem;
+                console.log(this.initialValue.length);
+                console.log(this.items.length);
+                this.isCheckAll = (this.initialValue.length == this.items.length);
+            })
+            .catch(res=>{
+                console.log(res);
+            })
         }
+        // this.checkedItem = this.initialValue;
+        // this.selectedItemID = this.checkedItem;
+        // console.log(this.initialValue.length);
+        // console.log(this.items.length);
+        // this.isCheckAll = (this.initialValue.length == this.items.length);
+        // console.log(this.checkedItem);
+        // console.log(this.isCheckAll);
+        // console.log(this.selectedItemID);
     },
     watch: {
-        idValue() {
-            this.selectedItemID = [];
-            this.selectedItemID.push(this.idValue);
-            console.log(this.selectedItemID);
+        // idValue() {
+        //     this.selectedItemID = [];
+        //     this.selectedItemID.push(this.idValue);
+        //     console.log(this.selectedItemID);
 
-        },
-        displayValue() {
-            this.optionSelected = [];
-            this.optionSelected.push(this.displayValue) ;
-            console.log(this.optionSelected);   
+        // },
+        // displayValue() {
+        //     this.optionSelected = [];
+        //     this.optionSelected.push(this.displayValue) ;
+        //     console.log(this.optionSelected);   
             
-        },
+        // },
         checkedItem(value) {
             // console.log(this.$refs.checkInputAll); 
             if(this.checkedItem.length == this.items.length) {
                 console.log(value);
                 this.isCheckAll = true;
-                this.optionSelected = [];
-                this.optionSelected = ["Tất cả"];
+                // this.$emit("getValue", this.checkedItem);  
+
 
             }else {
                 this.isCheckAll = false;
                 // console.log(this.items);
                 this.selectedItemID = value;
-                console.log(this.selectedItemID);
                 this.optionSelected = [];
-                for(var j = 0 ; j<this.checkedItem.length ; j++) {
-                    this.optionSelected.push(value[j][this.valueName]);
-                    console.log(value[j][this.valueName]);
-
-                }
+                // this.$emit("getValue", this.checkedItem);  
                 
             }
 
@@ -124,10 +146,18 @@ export default {
             .then(res=>res.json())
             .then(res=>{
                 this.items = res;
+                console.log(this.items.length);
+
             })
             .catch(res=>{
                 console.log(res);
             })
+        },
+        removeAllOption() {
+            this.isCheckAll = false;
+            this.selectedItemID = [];
+            this.checkedItem = [];
+            this.$emit("getValue", this.checkedItem);  
         },
         handleFocusOut() {
             this.isShowOptions = false;
@@ -135,14 +165,9 @@ export default {
         toggleOptions() {
             this.isShowOptions = !this.isShowOptions;
         },
-        handleOptionClicked(item) {
-            // this.selectedItemID = [];
-            // this.$emit("getValue", item);  
-            this.optionSelected.push(item[this.valueName]);
-            // this.isShowOptions = false;
-            this.selectedItemID.push(item[this.idName]);
-            console.log(this.optionSelected);
-            console.log(this.optionSelected);
+        handleOptionClicked() {
+            this.$emit("getValue", this.checkedItem);  
+
         },
         checkboxChoseAllOnClick() {
             try {
@@ -150,7 +175,14 @@ export default {
                 if(!this.isCheckAll) {
                     this.items.forEach( (item) => {
                         this.checkedItem.push(item);
+                        this.selectedItemID.push(item[this.idName])
+                        this.$emit("getValue", this.checkedItem);  
+
                     }) 
+                }else {
+                    this.checkedItem= [];
+                    this.selectedItemID = [];
+                    this.$emit("getValue", this.checkedItem);  
                 }
             } catch (error) {
                 console.log(error);
@@ -160,6 +192,8 @@ export default {
             // this.checkedItem.pop(option);
             this.checkedItem= this.checkedItem.filter(item => item !== option);
             this.selectedItemID=this.selectedItemID.filter(i => i !== option[this.idName]);  
+            this.$emit("getValue", this.checkedItem);  
+
         },
 
     },
@@ -172,18 +206,9 @@ export default {
     .dropdown {
     position: relative;
     border-radius: 4px;
-    /* box-sizing: border-box; */
-    /* height: 32px; */
     min-width: 128px;
     }
 
-    /* .select--multi {
-        background-size: 28px 28px;
-        background-repeat: no-repeat;
-        background-position-y: center;
-        background-position-x: 102%;
-        background-image: url(../../assets/icon/ic_Chevron.png);
-    } */
 
     .dropdown-select {
         background-size: 28px 28px;

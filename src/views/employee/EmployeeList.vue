@@ -13,7 +13,7 @@
             </div>
             <div class="page__header--right">
                 <button @click="btnAddOnClick"  id="btnAdd" class="button">Thêm</button> 
-                <button class="button button-basic--white">Xuất khẩu</button> 
+                <button @click="exportFile" class="button button-basic--white">Xuất khẩu</button> 
                 <button @click="showDeleteChose" id="btnShowDelete" class="button-small btn-selectDelete"><i class="fa-solid fa-ellipsis"></i></button>
                 <div v-if="isShowDeleteChose" class="showDeleteChose">
                     <button @click="deleteMultiRowOnClick" id="btnDeleteChose" class="button-small btnDeleteChose"><i class="fa-solid fa-trash-can"></i></button>
@@ -38,20 +38,26 @@
                             <th class="text-align--right" style="width:100px"></th>
                         </tr>
                     </thead>
-                    <tbody v-for="(item) in employees" :key="item.EmployeeID" @dblclick="rowOnDblClick(item)">
-                        <tr :id="item.EmployeeID" :ref="item.EmployeeID" :class="{'row--selected': checkedItemID.includes(item.EmployeeID) }">
-                            <td class="text-align--center" style="width:40px"><input :value="item.EmployeeID" :checked="checkedItemID.includes(item.EmployeeID) " v-model="checkedItemID" type="checkbox" class="checkbox-item"></td>
-                            <td class="text-align--center" style="width:100px">{{item.EmployeeCode}}</td>
-                            <td @click="rowOnDblClick(item)" class="text-align--left" style="width:250px; color: var(--main-color);">{{item.EmployeeName}}</td>
-                            <td class="text-align--center" style="width:100px">{{item.TelNumber}}</td>
-                            <td class="text-align--left" style="width:175px">{{item.GroupName}}</td>
-                            <td class="text-align--left" style="width:100px">{{item.SubjectName}}</td>
-                            <td class="text-align--left" style="width:200px">{{item.StorageRoomName}}</td>
-                            <td :class="{'icon-checked' : (item.EMT == 1)}" class="text-align--center" style="width:120px"></td>
-                            <td :class="{'icon-checked' : (item.WorkStatus == 1)}" class="text-align--center" style="width:120px"></td>
+                    <tbody v-for="(item) in employeeDetails" :key="item.employee.EmployeeID" @dblclick="rowOnDblClick(item)" >
+                        <tr :id="item.employee.EmployeeID" :ref="item.employee.EmployeeID" :class="{'row--selected': checkedItemID.includes(item.employee.EmployeeID) }">
+                            <td class="text-align--center" style="width:40px"><input :value="item.employee.EmployeeID" :checked="checkedItemID.includes(item.employee.EmployeeID) " v-model="checkedItemID" type="checkbox" class="checkbox-item"></td>
+                            <td class="text-align--center" style="width:100px">{{item.employee.EmployeeCode}}</td>
+                            <td @click="rowOnDblClick(item)" class="text-align--left" style="width:250px; color: var(--main-color);">{{item.employee.EmployeeName}}</td>
+                            <td class="text-align--center" style="width:100px">{{item.employee.TelNumber}}</td>
+                            <td class="text-align--left" style="width:175px">{{item.employee.GroupName}}</td>
+                            <td class="text-align--left" style="width:100px">
+                                <!-- <span v-for="(i) in item.ListSubject" :key="i.SubjectID">{{i.SubjectName}} &nbsp;</span>  -->
+                                {{ displayList(item.ListSubject, "SubjectName") }}
+                            </td>
+                            <td class="text-align--left" style="width:200px">
+                                <!-- <span v-for="(i) in item.ListStorageRoom" :key="i.StorageRoomID">{{i.StorageRoomName}} &nbsp;</span>  -->
+                                {{ displayList(item.ListStorageRoom, "StorageRoomName") }}
+                            </td>
+                            <td :class="{'icon-checked' : (item.employee.EMT == 1)}" class="text-align--center" style="width:120px"></td>
+                            <td :class="{'icon-checked' : (item.employee.WorkStatus == 1)}" class="text-align--center" style="width:120px"></td>
                             <td class="text-align--center" style="width:100px">
                                 <button @click="rowOnDblClick(item)" class="button-small"><i class="fa-solid fa-pen"></i></button>
-                                <button @click="deleteRowClick(item.EmployeeID)" class="button-small"><i class="fa-solid fa-trash-can"></i></button>
+                                <button @click="deleteRowClick(item.employee.EmployeeID)" class="button-small"><i class="fa-solid fa-trash-can"></i></button>
                             </td>
                         </tr>
                     </tbody>
@@ -113,7 +119,7 @@ export default {
     components:{EmployeeDetail,MLoading, MToastMessage, MConfirmDialog,EmployeeEmpty},
     data() {
         return {
-            employees: [
+            employeeDetails: [
             ],
             employeeSelected: {},
             isShowDetail: false,
@@ -137,13 +143,9 @@ export default {
     },
     
     watch: {
-        // fullName: function (newValue, oldValue) {
-        //     console.log(newValue);
-        //     console.log(oldValue);
-        // }
         checkedItemID(value) {
             console.log(this.$refs.checkInputAll); 
-            if(this.checkedItemID.length == this.employees.length) {
+            if(this.checkedItemID.length == this.employeeDetails.length) {
                 console.log(value);
                 this.isCheckAll = true;
             }else {
@@ -172,7 +174,9 @@ export default {
          */ 
         btnAddOnClick(){
             try {
-                this.employeeSelected = {};
+                this.employeeSelected.employee = {};
+                this.employeeSelected.ListSubject = [];
+                this.employeeSelected.ListStorageRoom = [];
                 this.showDialog(true);
                 this.formMode = "POST";
                 console.log(this.formMode);
@@ -187,8 +191,8 @@ export default {
                 this.checkedItemID= [];
                 console.log(this.checkedItemID);
                 if(!this.isCheckAll) {
-                    this.employees.forEach( (employee) => {
-                        this.checkedItemID.push(employee.EmployeeID);
+                    this.employeeDetails.forEach( (employeeDetail) => {
+                        this.checkedItemID.push(employeeDetail.employee.EmployeeID);
                     }) 
                 }
             } catch (error) {
@@ -205,8 +209,7 @@ export default {
         },
         saveButtonOnClick() {
             var me = this;
-            var emp = me.employeeSelected
-            // emp.DepartmentId = "142cb08f-7c31-21fa-8e90-67245e8b283e";
+            var emp = me.employeeSelected;
             console.log(emp);
             var option ;
             
@@ -219,17 +222,21 @@ export default {
                     body: JSON.stringify(emp)
                 }
                 me.isLoading = true;
-                fetch("http://localhost:10557/api/Employees/", option)
+                fetch("http://localhost:10557/api/EmployeeDetails/Detail", option)
                     .then(function(response) {
                         return response.json();
                     })
                     .then(function() {
-                        me.employees.push(emp);
+                        me.employeeDetails.push(emp);
                         me.isLoading = false;
                         me.isToastMessage = true;
                         setTimeout(() => {
                             me.isToastMessage = false;
                         },2000)
+                        
+                    })
+                    .then(function() {
+                        me.getData();
                     })
                     .catch((error) => {
                         console.error('Error:', error);
@@ -243,8 +250,9 @@ export default {
                     },
                     body: JSON.stringify(emp)
                 }
+                console.log(emp);
                 me.isLoading = true;
-                fetch("http://localhost:10557/api/Employees" + '/' + me.employeeSelected.EmployeeID, option)
+                fetch("http://localhost:10557/api/EmployeeDetails/Detail" + '/' + me.employeeSelected.employee.EmployeeID, option)
                     .then(function(response) {
                         return response.json();
                     })
@@ -280,7 +288,7 @@ export default {
                 this.isShowDetail = true;
                 this.employeeSelected = emp;
                 this.formMode = "PUT";
-                console.log(this.formMode);
+                console.log(emp);
             } catch (error) {
                 console.log(error);
             }
@@ -290,9 +298,13 @@ export default {
             this.isShowDetail = isShow;
         },
 
-        // rowOnClick(emp) {
-        //     console.log(emp);
-        // },
+        displayList(list, name) {
+            try {
+                return list.map((item) => item[name]).join(",  ");
+            } catch (error) {
+                console.log(error);
+            }
+        },
 
         deleteRowClick(idRowDelete) {
             this.isShowConfirmDialog = true;
@@ -365,11 +377,11 @@ export default {
                         .then(function() {
                             // var row_item = document.getElementById(`${me.checkedItemID[i]}`);
                             // console.log(row_item);
-                            fetch("http://localhost:10557/api/Employees/filter?pageSize=100",{method:"GET"})
+                            fetch("http://localhost:10557/api/EmployeeDetails/filterDetails?pageSize=100",{method:"GET"})
                             .then(res=>res.json())
                             .then(res=>{
                                 console.log(res.Data);
-                                me.employees = res.Data;
+                                me.employeeDetails = res.Data;
                                 
                             })
                             .catch(res=>{
@@ -434,14 +446,14 @@ export default {
 
         getData() {
             this.isLoading = true;
-            fetch("http://localhost:10557/api/Employees/filter?keyword=" + this.inputSearch + "&pageNumber=" + this.currentPage ,{method:"GET"})
+            fetch("http://localhost:10557/api/EmployeeDetails/filterDetails?keyword=" + this.inputSearch + "&pageNumber=" + this.currentPage ,{method:"GET"})
             .then(res=>res.json())
             .then(res=>{
                 console.log(res.Data);
                 if(res.TotalCount > 0 ) {
-                    this.employees = res.Data;
+                    this.employeeDetails = res.Data;
                     this.totalPage = Math.ceil((res.TotalCount) /100);
-                    this.itemPerPage = this.employees.length;
+                    this.itemPerPage = this.employeeDetails.length;
                 }
                 this.isLoading = false;
                 console.log(res.TotalCount);
@@ -452,6 +464,11 @@ export default {
             })
         },
         
+        exportFile() {
+            location.assign("http://localhost:10557/api/EmployeeDetails/ExportFile?keyword=" + this.inputSearch + "&pageNumber=" + this.currentPage)
+            
+        },
+
         changePage() {
             if(this.totalPage >= this.currentPage && this.currentPage > 0) {
                 this.getData();

@@ -10,8 +10,10 @@
                             <button class="button">Chọn ảnh</button>
                         </div>
                         <div class="dialog__info-user">
-                            <span>{{employeeSelected.EmployeeName}}</span>
-                            <span>{{employeeSelected.EmployeeCode}}</span>
+                            <span v-if="(this.employeeSelected.employee.EmployeeName != '' && this.employeeSelected.employee.EmployeeName != undefined) " class="text-align--center">{{employeeSelected.employee.EmployeeName}}</span>
+                            <span v-else class="text-align--center">Họ và tên</span>
+                            <span v-if="(this.employeeSelected.employee.EmployeeCode != '' && this.employeeSelected.employee.EmployeeCode != undefined) " class="text-align--center">{{employeeSelected.employee.EmployeeCode}}</span>
+                            <span v-else class="text-align--center">Số hiệu cán bộ</span>
                         </div>
                     </div>
                 </div>
@@ -31,7 +33,7 @@
                                 name-property="Số hiệu cán bộ"
                                 ref="firstFocus" 
                                 tabindex="1" 
-                                v-model="employeeSelected.EmployeeCode" propName="EmployeeCode" 
+                                v-model="employeeSelected.employee.EmployeeCode" propName="EmployeeCode" 
                                 @blur="blurEmpCode($event)"
                                 :class="{'input__error--required': isEmptyEmpCodeBlur}"
                                 >
@@ -46,7 +48,7 @@
                                 </div>
                                 <input tabindex="2" required type="text" class="input"
                                 propName="FullName" style="flex:1; padding-left: 12px;" id="txtFullName" name-property="Họ và tên"
-                                v-model="employeeSelected.EmployeeName" 
+                                v-model="employeeSelected.employee.EmployeeName" 
                                 @blur="blurEmpName($event)"  
                                 :class="{'input__error--required': isEmptyEmpNameBlur}"
                                 >
@@ -61,7 +63,7 @@
                                 <div style="margin-right: 8px;" class="col-45">
                                     <label>Số điện thoại</label>
                                 </div>
-                                <input tabindex="3" v-model="employeeSelected.TelNumber" style="flex:1; padding-left: 12px;" id="txtPhoneNumber" 
+                                <input tabindex="3" v-model="employeeSelected.employee.TelNumber" style="flex:1; padding-left: 12px;" id="txtPhoneNumber" 
                                     name-property="Số điện thoại" type="text" class="input"
                                     @blur="blurEmpTelNumber($event)"
                                     >
@@ -71,7 +73,7 @@
                                 <div style="margin-right: 8px;" class="col-35">
                                     <label>Email</label>
                                 </div>
-                                <input tabindex="4" v-model="employeeSelected.Email" style="flex:1; padding-left: 12px;" id="txtEmail" name-property="Email"
+                                <input tabindex="4" v-model="employeeSelected.employee.Email" style="flex:1; padding-left: 12px;" id="txtEmail" name-property="Email"
                                 type="text" class="input"
                                 @blur="blurEmpEmail($event)"
                                 >
@@ -84,9 +86,9 @@
                                 <div style="margin-right: 8px;" class="col-45">
                                     <label>Tổ bộ môn</label>
                                 </div>
-                                <MSingleSelect
+                                <MSingleSelect style="align-items: center;"
                                     @getValue="getValueGroup"
-                                    :initialValue="employeeSelected"
+                                    :initialValue="employeeSelected.employee"
                                     :url="'http://localhost:10557/api/Groups'"
                                     :idName="'GroupID'"
                                     :valueName="'GroupName'"
@@ -99,9 +101,8 @@
                                     <label>QL theo môn</label>
                                 </div>
                                 <MMultiSelect
-                                    
-                                    @getValue="getValue"
-                                    :initialValue="employeeSelected"
+                                    @getValue="getValueSubjects"
+                                    :initialValue="employeeSelected.ListSubject"
                                     :url="'http://localhost:10557/api/Subjects'"
                                     :idName="'SubjectID'"
                                     :valueName="'SubjectName'"
@@ -114,8 +115,8 @@
                                 <label>QL kho, phòng</label>
                             </div>
                             <MMultiSelect
-                                @getValue="getValue"
-                                :initialValue="employeeSelected"
+                                @getValue="getValueStorageRooms"
+                                :initialValue="employeeSelected.ListStorageRoom"
                                 :url="'http://localhost:10557/api/StorageRooms'"
                                 :idName="'StorageRoomID'"
                                 :valueName="'StorageRoomName'"
@@ -125,13 +126,13 @@
                         </div>
     
                         <div class="row">
-                            <input tabindex="8" class="checkbox-item" type="checkbox" id="EMT" :value="(employeeSelected.EMT == 1) ? true : false" v-model="EMT" :checked="(employeeSelected.EMT == 1) ? true : false" >
+                            <input tabindex="8" class="checkbox-item" type="checkbox" id="EMT" :value="(employeeSelected.employee.EMT == 1) ? true : false" v-model="EMT" :checked="(employeeSelected.EMT == 1) ? true : false" >
                             <label>Trình độ nghiệp vụ QLTB</label>
-                            <input tabindex="9" class="checkbox-item" type="checkbox" id="WorkStatus" :value="(employeeSelected.WorkStatus == 1) ? true : false" v-model="WorkStatus" :checked="(employeeSelected.WorkStatus == 1) ? true : false"  style="margin-left: 24px ;">
+                            <input tabindex="9" class="checkbox-item" type="checkbox" id="WorkStatus" :value="(employeeSelected.employee.WorkStatus == 1) ? true : false" v-model="WorkStatus" :checked="(employeeSelected.WorkStatus == 1) ? true : false"  style="margin-left: 24px ;">
                             <label style="text-align: center;">Đang làm việc</label>
-                            <div v-if="(employeeSelected.WorkStatus == 0)" class="quit-date" style="position: absolute; right: 24px;"> 
+                            <div v-if="(employeeSelected.employee.WorkStatus == 0)" class="quit-date" style="position: absolute; right: 24px;"> 
                                 <label style="text-align: center;">Ngày nghỉ việc</label>
-                                <input style="margin-left: 8px;" type="date">
+                                <input style="margin-left: 8px;" type="date" v-model="birthday">
                             </div>
     
                         </div>
@@ -172,6 +173,11 @@ export default {
             // employeeDetail: {},
             EMT: false,
             WorkStatus: false,
+            QuitDate : {
+                d: '01',
+				m: '01',
+				y: '2018'
+            },
             isEmptyEmpNameBlur: false,
             isEmptyEmpCodeBlur: false,
             isEmptyEmpName: false,
@@ -181,7 +187,8 @@ export default {
             empTelNumber:"",
             empEmail:"",
             validateString:[],
-
+            birthday: '',
+            
         };
     },
     // componentUpdated: {
@@ -192,11 +199,55 @@ export default {
     //         }
     //     }
     // },
+    computed: {
+		// _QuitDate: {
+		// 	get(){
+		// 		let {d, m, y} = this.QuitDate;
+        //         if(m<10) { m = `0${m}`;}
+        //         if(d<10) { d = `0${d}`;}
+		// 		return `${y}-${m}-${d}`;
+		// 	},
+		// 	set(newVal){
+		// 		let [y, m, d] = newVal.split('-');
+		// 		this.QuitDate = {y, m, d};
+		// 	}
+		// }
+	},
     created() {
         // alert("khởi tạo popup");
         this.employeeSelected = this.employeeDetail;
-        this.EMT = (this.employeeSelected.EMT == 1) ? true : false;
-        this.WorkStatus = (this.employeeSelected.WorkStatus == 1) ? true : false;
+        this.EMT = (this.employeeSelected.employee.EMT == 1) ? true : false;
+        var date = new Date(this.employeeSelected.employee.QuitDate); 
+        this.QuitDate = {
+            d: (date.getDay() + 1).toString(),
+			m: (date.getMonth() + 1).toString(),
+			y: date.getFullYear().toString()
+        }
+        let {d, m, y} = this.QuitDate;
+        if(m<10) { m = `0${m}`;}
+        if(d<10) { d = `0${d}`;}
+        this._QuitDate = `${y}-${m}-${d}`;
+        this.birthday = this._QuitDate;
+        console.log(this.QuitDate);
+        console.log(this._QuitDate);
+        // this.birthday = new Date(this._QuitDate);
+        var dateNow = new Date();
+        console.log(this.birthday > dateNow);
+        console.log(dateNow);
+        // new Date(this.employeeSelected.employee.QuitDate); 
+        this.WorkStatus = (this.employeeSelected.employee.WorkStatus == 1) ? true : false;
+
+        if(this.formMode === 'POST' ) {
+            fetch("http://localhost:10557/api/Employees/new-code",{method:"GET"})
+                .then(res=>res.text())
+                .then(res=>{
+                    console.log(res);
+                    this.employeeSelected.employee.EmployeeCode = res;
+                })
+                .catch(res=>{
+                    console.log(res);
+                })
+        }
         
     },
     mounted(){
@@ -211,14 +262,15 @@ export default {
     watch: {
         EMT() {
             // this.EMT = (this.employeeSelected.EMT == 1) ? true : false;
-            this.employeeSelected.EMT = (this.EMT == true) ? 1 : 0;
+            this.employeeSelected.employee.EMT = (this.EMT == true) ? 1 : 0;
 
         },
         WorkStatus() {
             // this.EMT = (this.employeeSelected.EMT == 1) ? true : false;
-            this.employeeSelected.WorkStatus = (this.WorkStatus == true) ? 1 : 0;
+            this.employeeSelected.employee.WorkStatus = (this.WorkStatus == true) ? 1 : 0;
 
         },
+        
         
         
 
@@ -226,11 +278,20 @@ export default {
     },
     methods: {
         getValueGroup(idGroup, nameGroup) {
-            this.employeeSelected.GroupID = idGroup;
-            this.employeeSelected.GroupName = nameGroup;
+            this.employeeSelected.employee.GroupID = idGroup;
+            this.employeeSelected.employee.GroupName = nameGroup;
             console.log(idGroup,nameGroup);
         },
 
+        getValueSubjects(listSubject) {
+            this.employeeSelected.ListSubject = listSubject;
+            console.log(listSubject);
+        },
+
+        getValueStorageRooms(listStorageRoom) {
+            this.employeeSelected.ListStorageRoom = listStorageRoom;
+            console.log(listStorageRoom);
+        },
         
         btnCloseOnClick() {
             // document.getElementById("dlgEmployeeDetail").style.display = "none";
@@ -247,31 +308,60 @@ export default {
                 // }
                 // console.log(this.employeeSelected.EmployeeCode );
                 this.validateString = [];
-                if(this.employeeSelected.EmployeeCode == "" || this.employeeSelected.EmployeeCode == undefined) {
-                    this.validateString.push("Số hiệu cán bộ");
+                if(this.employeeSelected.employee.EmployeeCode == "" || this.employeeSelected.employee.EmployeeCode == undefined) {
+                    this.validateString.push("Số hiệu cán bộ không được phép để trống");
                 } else {
-                    this.validateString= this.validateString.filter(item => item !== "Số hiệu cán bộ");
+                    this.validateString= this.validateString.filter(item => item !== "Số hiệu cán bộ không được phép để trống");
                 }
-                if(this.employeeSelected.EmployeeName == "" || this.employeeSelected.EmployeeName == undefined) {
-                    this.validateString.push("Họ và tên");
+                if(this.employeeSelected.employee.EmployeeName == "" || this.employeeSelected.employee.EmployeeName == undefined) {
+                    this.validateString.push("Họ và tên không được phép để trống");
                 } else {
-                    this.validateString= this.validateString.filter(item => item !== "Họ và tên");
+                    this.validateString= this.validateString.filter(item => item !== "Họ và tên không được phép để trống");
+                }
+                if(this.employeeSelected.employee.TelNumber != undefined && this.employeeSelected.employee.TelNumber != "") {
+                    if(this.employeeSelected.employee.TelNumber.length < 10 ) {
+                        this.validateString.push("Số điện thoại không đủ độ dài");
+                    } else {
+                        this.validateString= this.validateString.filter(item => item !== "Số điện thoại không đủ độ dài");
+                    }
+                }else {
+                    this.validateString= this.validateString.filter(item => item !== "Số điện thoại không đủ độ dài");
+                }
+                if(this.employeeSelected.employee.Email != undefined && this.employeeSelected.employee.Email != "") {
+                    if(this.employeeSelected.employee.Email.includes('@') == false) {
+                        this.validateString.push("Email không đúng định dạng");
+                    } else {
+                        this.validateString= this.validateString.filter(item => item !== "Email không đúng định dạng");
+                    }
+                    // var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                    // if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.employeeSelected.employee.Email)) {
+                    //     this.validateString.push("Email không đúng định dạng");
+                    // } else {
+                    //     this.validateString= this.validateString.filter(item => item !== "Email không đúng định dạng");
+                    // }
+                }
+                var dateNow = new Date();
+                console.log(this.birthday > dateNow);
+                if(this.birthday < dateNow) {
+                    this.validateString.push("Ngày nghỉ việc không được lớn hơn ngày hiện tại");
+                } else {
+                    this.validateString= this.validateString.filter(item => item !== "Ngày nghỉ việc không được lớn hơn ngày hiện tại");
                 }
                 if(this.validateString.length == 0 ) {
                     this.$emit("saveButtonOnClick", this.employeeSelected);
                     this.showErrorValidate = false;
                     
                 } else {
-                    this.isEmptyEmpNameBlur = true;
-                    this.isEmptyEmpName = true;
-                    setTimeout(() => {
-                        this.isEmptyEmpName = false;
-                    },2000);
-                    this.isEmptyEmpCodeBlur = true;
-                    this.isEmptyEmpCode = true;
-                    setTimeout(() => {
-                        this.isEmptyEmpCode = false;
-                    },2000);
+                    // this.isEmptyEmpNameBlur = true;
+                    // this.isEmptyEmpName = true;
+                    // setTimeout(() => {
+                    //     this.isEmptyEmpName = false;
+                    // },2000);
+                    // this.isEmptyEmpCodeBlur = true;
+                    // this.isEmptyEmpCode = true;
+                    // setTimeout(() => {
+                    //     this.isEmptyEmpCode = false;
+                    // },2000);
                     this.showErrorValidate = true;
 
                 }
@@ -307,7 +397,6 @@ export default {
         blurEmpCode(e) {
             var code =e.target.value;
             this.empCode = code;
-            console.log(this.empCode);
             if(code == "") {
                 this.isEmptyEmpCodeBlur = true;
                 this.isEmptyEmpCode = true;
@@ -332,7 +421,15 @@ export default {
         blurEmpEmail(e) {
             var email =e.target.value;
             this.empEmail = email;
-        }
+        },
+
+        // validateEmail() {
+        //     if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email)) {
+        //         this.msg['email'] = 'Please enter a valid email address';
+        //     } else {
+        //         this.msg['email'] = '';
+        //     }
+        // },
     },
 }
 </script>
