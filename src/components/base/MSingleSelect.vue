@@ -42,7 +42,12 @@ export default {
             hoveredOptionIndex: 0,
         }
     },
+
     created() {
+        /**
+        * Gọi API để lấy dữ liệu cho combobox
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         if (this.url) {
             this.getData();
             this.selectedItemID = [];
@@ -51,63 +56,89 @@ export default {
             // console.log(this.initialValue);
         }
     },
+
     watch: {
         initialValue() {
             this.optionSelected = this.initialValue ;
             this.selectedItemID.push(this.optionSelected[this.idName]);
             
         },
-        
-    },
-    
-    beforeUpdate() {
-        // if (this.url) {
-        //     // this.getData();
-        //     this.selectedItemID = [];
-        //     this.selectedItemID.push(this.optionSelected[this.idName]);
-            // this.selectedItemID = [];
-            // this.optionSelected = { ...this.initialValue };
-            // this.selectedItemID.push(this.optionSelected[this.idName]);
-
-        //     console.log({ ...this.initialValue });
-        // }
-
     },
 
     methods: {
+        /**
+        * Gọi API để lấy dữ liệu
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         getData() {
-            fetch(this.url,{method:"GET"})
-            .then(res=>res.json())
-            .then(res=>{
-                this.items = res;
-            })
-            .catch(res=>{
-                console.log(res);
-            })
+            try {
+                fetch(this.url,{method:"GET"})
+                .then(res=>res.json())
+                .then(res=>{
+                    this.items = res;
+                })
+                .catch(res=>{
+                    console.log(res);
+                })
+            } catch (error) {
+                console.log(error);
+            }
         },
-        handleFocusOut() {
-            this.isShowOptions = false;
-            console.log(this.isShowOptions);
 
+        /**
+        * Hàm bỏ Focus
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
+        handleFocusOut() {
+            try {
+                this.isShowOptions = false;
+            } catch (error) {
+                console.log(error);
+            }
         },
+
+        /**
+        * Hàm ẩn hiện dropdown
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         toggleOptions() {
-            this.isShowOptions = !this.isShowOptions;
-            console.log(this.$refs.item[0]);
-            this.$refs.item[0].focus();
-           
+            try {
+                this.isShowOptions = !this.isShowOptions;
+                console.log(this.$refs.item[0]);
+                this.$refs.item[0].focus();
+            } catch (error) {
+                console.log(error);
+            }
         },
+
+        /**
+        * Hàm chọn 1 lựa chọn
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         handleOptionClicked(item) {
-            this.selectedItemID = [];
-            this.$emit("getValue", item[this.idName], item[this.valueName], item);  
-            this.optionSelected = item;
-            this.selectedItemID.push(this.optionSelected[this.idName]);
-            this.isShowOptions = false;
-            console.log(this.isShowOptions);
-            console.dir(this.$refs.item[0]);
+            try {
+                this.selectedItemID = [];
+                this.$emit("getValue", item[this.idName], item[this.valueName], item);  
+                this.optionSelected = item;
+                this.selectedItemID.push(this.optionSelected[this.idName]);
+                this.isShowOptions = false;
+                console.log(this.isShowOptions);
+                console.dir(this.$refs.item[0]);
+            } catch (error) {
+                console.log(error);
+            }
         },
+
+        /**
+        * Hàm focus vào lựa chọn tiếp theo
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         focusOptionNext() {
-            this.$refs.item[0].focus();
-            console.log("focus");
+            try {
+                this.$refs.item[0].focus();
+            } catch (error) {
+                console.log(error);
+            }
         },
 
     },

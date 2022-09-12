@@ -126,19 +126,19 @@
                         </div>
     
                         <div class="row">
-                            <input tabindex="8" class="checkbox-item" type="checkbox" id="EMT" :value="(employeeSelected.employee.EMT == 1) ? true : false" v-model="EMT" :checked="(employeeSelected.EMT == 1) ? true : false" >
+                            <input tabindex="10" class="checkbox-item" type="checkbox" id="EMT" :value="(employeeSelected.employee.EMT == 1) ? true : false" v-model="EMT" :checked="(employeeSelected.EMT == 1) ? true : false" >
                             <label>Trình độ nghiệp vụ QLTB</label>
-                            <input tabindex="9" class="checkbox-item" type="checkbox" id="WorkStatus" :value="(employeeSelected.employee.WorkStatus == 1) ? true : false" v-model="WorkStatus" :checked="(employeeSelected.WorkStatus == 1) ? true : false"  style="margin-left: 24px ;">
+                            <input tabindex="11" class="checkbox-item" type="checkbox" id="WorkStatus" :value="(employeeSelected.employee.WorkStatus == 1) ? true : false" v-model="WorkStatus" :checked="(employeeSelected.WorkStatus == 1) ? true : false"  style="margin-left: 24px ;">
                             <label style="text-align: center;">Đang làm việc</label>
                             <div v-if="(employeeSelected.employee.WorkStatus == 0)" class="quit-date" style="position: absolute; right: 24px;"> 
                                 <label style="text-align: center;">Ngày nghỉ việc</label>
-                                <input style="margin-left: 8px;" type="date" v-model="birthday">
+                                <input tabindex="12" style="margin-left: 8px;" type="date" v-model="birthday">
                             </div>
     
                         </div>
                         <div class="dialog__footer">
-                            <button tabindex="10" @click="btnSaveOnclick" id="btnSave" class="button" style="order:1">Lưu</button>
-                            <button tabindex="11" @click="btnCloseOnClick" class="button button-basic--white" style="order:2">Đóng</button>
+                            <button tabindex="13" @click="btnSaveOnclick" id="btnSave" class="button" style="order:1">Lưu</button>
+                            <button tabindex="14" @click="btnCloseOnClick" class="button button-basic--white" style="order:2">Đóng</button>
                         </div>
                     </div>
                 </div>
@@ -157,13 +157,6 @@ export default {
     name: "EmployeeDetail",
     components: {MMessage, MSingleSelect, MMultiSelect},
     props: ["showDialogFunction", "employeeDetail" , "formMode"],
-    // watch: {
-    //     employeeDetail: function (newValue, oldValue) {
-    //         if (newValue.EmployeeCode == "") {
-    //             console.log(1);
-    //         }
-    //     }
-    // },
     data() {
         return {
             employeeSelected: {},
@@ -188,17 +181,10 @@ export default {
             empEmail:"",
             validateString:[],
             birthday: '',
+            CheckDuplicateEmployeeCode: "",
             
         };
     },
-    // componentUpdated: {
-    //     focus: {
-    //         // định nghĩa cho directive
-    //         inserted: function (el) {
-    //           el.focus()
-    //         }
-    //     }
-    // },
     computed: {
 		// _QuitDate: {
 		// 	get(){
@@ -214,51 +200,58 @@ export default {
 		// }
 	},
     created() {
-        // alert("khởi tạo popup");
-        this.employeeSelected = this.employeeDetail;
-        this.EMT = (this.employeeSelected.employee.EMT == 1) ? true : false;
-        var date = new Date(this.employeeSelected.employee.QuitDate); 
-        this.QuitDate = {
+        try {
+            this.employeeSelected = this.employeeDetail;
+            this.EMT = (this.employeeSelected.employee.EMT == 1) ? true : false;
+            var date = new Date(this.employeeSelected.employee.QuitDate); 
+            this.QuitDate = {
             d: (date.getDay() + 1).toString(),
 			m: (date.getMonth() + 1).toString(),
 			y: date.getFullYear().toString()
         }
-        let {d, m, y} = this.QuitDate;
-        if(m<10) { m = `0${m}`;}
-        if(d<10) { d = `0${d}`;}
-        this._QuitDate = `${y}-${m}-${d}`;
-        this.birthday = this._QuitDate;
-        console.log(this.QuitDate);
-        console.log(this._QuitDate);
-        // this.birthday = new Date(this._QuitDate);
-        var dateNow = new Date();
-        console.log(this.birthday > dateNow);
-        console.log(dateNow);
-        // new Date(this.employeeSelected.employee.QuitDate); 
-        this.WorkStatus = (this.employeeSelected.employee.WorkStatus == 1) ? true : false;
+            let {d, m, y} = this.QuitDate;
+            if(m<10) { m = `0${m}`;}
+            if(d<10) { d = `0${d}`;}
+            this._QuitDate = `${y}-${m}-${d}`;
+            this.birthday = this._QuitDate;
+            console.log(this.QuitDate);
+            console.log(this._QuitDate);
+            // this.birthday = new Date(this._QuitDate);
+            var dateNow = new Date();
+            console.log(this.birthday > dateNow);
+            console.log(dateNow);
+            // new Date(this.employeeSelected.employee.QuitDate); 
+            this.WorkStatus = (this.employeeSelected.employee.WorkStatus == 1) ? true : false;
 
-        if(this.formMode === 'POST' ) {
-            fetch("http://localhost:10557/api/Employees/new-code",{method:"GET"})
-                .then(res=>res.text())
-                .then(res=>{
-                    console.log(res);
-                    this.employeeSelected.employee.EmployeeCode = res;
-                })
-                .catch(res=>{
-                    console.log(res);
-                })
+            if(this.formMode === 'POST' ) {
+                try {
+                    fetch("http://localhost:10557/api/Employees/new-code",{method:"GET"})
+                    .then(res=>res.text())
+                    .then(res=>{
+                        console.log(res);
+                        this.employeeSelected.employee.EmployeeCode = res;
+                    })
+                    .catch(res=>{
+                        console.log(res);
+                    })
+                } catch (error) {
+                    console.log(error);
+                }       
+            }
+        } catch (error) {
+            console.log(error);
         }
         
     },
+
+    /**
+    * Sự kiện Focus vào ô nhập liệu đầu tiên
+    * Author: Nguyễn Đăng Quang (09/09/2022)
+    */
     mounted(){
             this.$refs.firstFocus.focus();
     },
-    // computed: {
-    //     this.$refs("firstFocus").focus();
-    // },
-    unmounted() {
-        // alert(" hủy popup");
-    },
+
     watch: {
         EMT() {
             // this.EMT = (this.employeeSelected.EMT == 1) ? true : false;
@@ -270,54 +263,80 @@ export default {
             this.employeeSelected.employee.WorkStatus = (this.WorkStatus == true) ? 1 : 0;
 
         },
-        
-        
-        
-
-
     },
+
     methods: {
+        /**
+        * Sự kiện lấy giá trị của combobox chọn tổ bộ môn
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         getValueGroup(idGroup, nameGroup) {
-            this.employeeSelected.employee.GroupID = idGroup;
-            this.employeeSelected.employee.GroupName = nameGroup;
-            console.log(idGroup,nameGroup);
+            try {
+                this.employeeSelected.employee.GroupID = idGroup;
+                this.employeeSelected.employee.GroupName = nameGroup;
+                console.log(idGroup,nameGroup);
+            } catch (error) {
+                console.log(error);
+            }
         },
 
+        /**
+        * Sự kiện lấy giá trị của combobox chọn môn
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         getValueSubjects(listSubject) {
-            this.employeeSelected.ListSubject = listSubject;
-            console.log(listSubject);
+            try {
+                this.employeeSelected.ListSubject = listSubject;
+            } catch (error) {
+                console.log(error);
+            }
         },
 
+        /**
+        * Sự kiện lấy giá trị của combobox chọn kho phòng
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         getValueStorageRooms(listStorageRoom) {
-            this.employeeSelected.ListStorageRoom = listStorageRoom;
-            console.log(listStorageRoom);
+            try {
+                this.employeeSelected.ListStorageRoom = listStorageRoom;
+            } catch (error) {
+                console.log(error);
+            }
         },
         
+        /**
+        * Sự kiện đóng form 
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         btnCloseOnClick() {
-            // document.getElementById("dlgEmployeeDetail").style.display = "none";
-            // this.showDialogFunction(false);
-            this.$emit("closeButtonOnClick", false, true, "1");
+            try {
+                this.$emit("closeButtonOnClick", false, true, "1");
+            } catch (error) {
+                console.log(error);
+            }
         },
 
+        /**
+        * Sự kiện ấn nút save
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         btnSaveOnclick() {
             try {
                 // validate dữ liệu:
-                // if (this.employeeDetail.EmployeeCode == undefined) {
-                //     this.isError = true;
-                //     this.showErrorValidate = true;
-                // }
-                // console.log(this.employeeSelected.EmployeeCode );
                 this.validateString = [];
+                // validate sô hiệu cán bộ
                 if(this.employeeSelected.employee.EmployeeCode == "" || this.employeeSelected.employee.EmployeeCode == undefined) {
                     this.validateString.push("Số hiệu cán bộ không được phép để trống");
                 } else {
                     this.validateString= this.validateString.filter(item => item !== "Số hiệu cán bộ không được phép để trống");
                 }
+                // validate tên nhân viên
                 if(this.employeeSelected.employee.EmployeeName == "" || this.employeeSelected.employee.EmployeeName == undefined) {
                     this.validateString.push("Họ và tên không được phép để trống");
                 } else {
                     this.validateString= this.validateString.filter(item => item !== "Họ và tên không được phép để trống");
                 }
+                // validate sô điện thoại nhân viên
                 if(this.employeeSelected.employee.TelNumber != undefined && this.employeeSelected.employee.TelNumber != "") {
                     if(this.employeeSelected.employee.TelNumber.length < 10 ) {
                         this.validateString.push("Số điện thoại không đủ độ dài");
@@ -327,6 +346,7 @@ export default {
                 }else {
                     this.validateString= this.validateString.filter(item => item !== "Số điện thoại không đủ độ dài");
                 }
+                // validate email nhân viên
                 if(this.employeeSelected.employee.Email != undefined && this.employeeSelected.employee.Email != "") {
                     if(this.employeeSelected.employee.Email.includes('@') == false) {
                         this.validateString.push("Email không đúng định dạng");
@@ -340,6 +360,7 @@ export default {
                     //     this.validateString= this.validateString.filter(item => item !== "Email không đúng định dạng");
                     // }
                 }
+                // validate ngày nghỉ việc nhân viên
                 var dateNow = new Date();
                 console.log(this.birthday > dateNow);
                 if(this.birthday < dateNow) {
@@ -347,21 +368,15 @@ export default {
                 } else {
                     this.validateString= this.validateString.filter(item => item !== "Ngày nghỉ việc không được lớn hơn ngày hiện tại");
                 }
+
+                
+
                 if(this.validateString.length == 0 ) {
                     this.$emit("saveButtonOnClick", this.employeeSelected);
                     this.showErrorValidate = false;
                     
                 } else {
-                    // this.isEmptyEmpNameBlur = true;
-                    // this.isEmptyEmpName = true;
-                    // setTimeout(() => {
-                    //     this.isEmptyEmpName = false;
-                    // },2000);
-                    // this.isEmptyEmpCodeBlur = true;
-                    // this.isEmptyEmpCode = true;
-                    // setTimeout(() => {
-                    //     this.isEmptyEmpCode = false;
-                    // },2000);
+                    // hiện popup validate
                     this.showErrorValidate = true;
 
                 }
@@ -372,55 +387,100 @@ export default {
             }
         },
 
+        /**
+        * Sự kiện ẩn thông báo validate
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         hideNotice() {
-            this.showErrorValidate = false;
+            try {
+                this.showErrorValidate = false;
+            } catch (error) {
+                console.log(error);
+            }
         },
         
+        /**
+        * Sự kiện khi blur input Họ và tên
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         blurEmpName(e) {
-            var name =e.target.value;
-            this.empName = name;
-            
-            if(name == "") {
-                this.isEmptyEmpNameBlur = true;
-                this.isEmptyEmpName = true;
-                setTimeout(() => {
-                    this.isEmptyEmpName = false;
-                },2000);
-                // this.validateString.push("Họ và tên");
+            try {
+                var name =e.target.value;
+                this.empName = name;
                 
-            }else {
-                this.isEmptyEmpNameBlur = false;
-                this.isEmptyEmpName = false;
-                // this.validateString= this.validateString.filter(item => item !== "Họ và tên");
+                if(name == "") {
+                    this.isEmptyEmpNameBlur = true;
+                    this.isEmptyEmpName = true;
+                    setTimeout(() => {
+                        this.isEmptyEmpName = false;
+                    },2000);
+                    // this.validateString.push("Họ và tên");
+
+                }else {
+                    this.isEmptyEmpNameBlur = false;
+                    this.isEmptyEmpName = false;
+                    // this.validateString= this.validateString.filter(item => item !== "Họ và tên");
+                }
+            } catch (error) {
+                console.log(error);
             }
         },
+
+        /**
+        * Sự kiện khi blur input SHCB
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         blurEmpCode(e) {
-            var code =e.target.value;
-            this.empCode = code;
-            if(code == "") {
-                this.isEmptyEmpCodeBlur = true;
-                this.isEmptyEmpCode = true;
-                setTimeout(() => {
+            try {
+                var code =e.target.value;
+                this.empCode = code;
+                if(code == "") {
+                    this.isEmptyEmpCodeBlur = true;
+                    this.isEmptyEmpCode = true;
+                    setTimeout(() => {
+                        this.isEmptyEmpCode = false;
+                    },2000);
+                    // this.validateString.push("Số hiệu cán bộ");
+
+
+                }else {
+                    this.isEmptyEmpCodeBlur = false;
                     this.isEmptyEmpCode = false;
-                },2000);
-                // this.validateString.push("Số hiệu cán bộ");
+                    // this.validateString= this.validateString.filter(item => item !== "Số hiệu cán bộ");
 
-
-            }else {
-                this.isEmptyEmpCodeBlur = false;
-                this.isEmptyEmpCode = false;
-                // this.validateString= this.validateString.filter(item => item !== "Số hiệu cán bộ");
-
+                }
+            } catch (error) {
+                console.log(error);
             }
+            
         },
+
+        /**
+        * Sự kiện khi blur input SĐT
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         blurEmpTelNumber(e) {
-            var telNum =e.target.value;
-            this.empTelNumber = telNum;
+            try {
+                var telNum =e.target.value;
+                this.empTelNumber = telNum;
+            } catch (error) {
+                console.log(error);
+            }
+            
 
         },
+
+        /**
+        * Sự kiện khi blur input email
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         blurEmpEmail(e) {
-            var email =e.target.value;
-            this.empEmail = email;
+            try {
+                var email =e.target.value;
+                this.empEmail = email;
+            } catch (error) {
+                console.log(error);
+            }
         },
 
         // validateEmail() {

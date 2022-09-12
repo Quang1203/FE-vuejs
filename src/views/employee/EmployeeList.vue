@@ -104,9 +104,6 @@
 </template>
 
 <script>
-// @import Detail sau khi chia ra thanhg component riêng
-// sửa rule : unuser .. 
-// Lấy val bằng res-ref
 
 import EmployeeDetail from  "./EmployeeDetail.vue";
 import MLoading from "../../components/base/MLoading.vue";
@@ -159,14 +156,19 @@ export default {
             }
         }
     },
-    computed: {
-        setNameUpperCaseComputed() {
-            return this.fullName.toUpperCase();
+
+    /**
+        * Sự kiện focus vào ô tìm kiếm
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
+    mounted(){
+        try {
+            this.$refs.firstFocus.focus();
+        } catch (error) {
+            console.log(error);
         }
     },
-    mounted(){
-            this.$refs.firstFocus.focus();
-    },
+
     methods: {
         /**
          * Ẩn hiện form chi tiết
@@ -186,6 +188,11 @@ export default {
             }
             
         },
+
+        /**
+         * Click vào ô checkbox tất cả
+         * Nguyễn Đăng Quang (04/08/2022)
+         */ 
         checkboxChoseAllOnClick() {
             try {
                 this.checkedItemID= [];
@@ -199,6 +206,11 @@ export default {
                 console.log(error);
             }
         },
+
+        /**
+         * Hiện ô chọn xóa nhiều
+         * Nguyễn Đăng Quang (04/08/2022)
+         */ 
         showDeleteChose() {
             try {
                 this.isShowDeleteChose = !this.isShowDeleteChose;
@@ -207,12 +219,18 @@ export default {
                 console.log(error);
             }
         },
+
+        /**
+         * Click vào nút save
+         * Nguyễn Đăng Quang (04/08/2022)
+         */ 
         saveButtonOnClick() {
             var me = this;
             var emp = me.employeeSelected;
             console.log(emp);
             var option ;
             
+            // Form thêm
             if (me.formMode == "POST") {
                 option = {
                     method: 'POST',
@@ -222,7 +240,8 @@ export default {
                     body: JSON.stringify(emp)
                 }
                 me.isLoading = true;
-                fetch("http://localhost:10557/api/EmployeeDetails/Detail", option)
+                try {
+                    fetch("http://localhost:10557/api/EmployeeDetails/Detail", option)
                     .then(function(response) {
                         return response.json();
                     })
@@ -242,7 +261,12 @@ export default {
                         console.error('Error:', error);
                         me.isLoading = false;
                     }) 
+                } catch (error) {
+                    console.log(error);
+                }
+                
             } else {
+                //Form sửa
                 option = {
                     method: 'PUT',
                     headers: {
@@ -252,7 +276,8 @@ export default {
                 }
                 console.log(emp);
                 me.isLoading = true;
-                fetch("http://localhost:10557/api/EmployeeDetails/Detail" + '/' + me.employeeSelected.employee.EmployeeID, option)
+                try {
+                    fetch("http://localhost:10557/api/EmployeeDetails/Detail" + '/' + me.employeeSelected.employee.EmployeeID, option)
                     .then(function(response) {
                         return response.json();
                     })
@@ -267,16 +292,24 @@ export default {
                         console.error('Error:', error);
                         me.isLoading = false;
                     }) 
+                } catch (error) {
+                    console.log(error);
+                }
             }
             me.showDialog(false);
             
         },
-        getName() {
-            return this.fullName;
-        },
 
+        /**
+         * Đóng form ConfirmDelete
+         * Nguyễn Đăng Quang (04/08/2022)
+         */ 
         cancelConfirmDelete() {
+            try {
             this.isShowConfirmDialog = false;
+            } catch (error) {
+                console.log(error);
+            }
         },
         
         /**
@@ -292,12 +325,20 @@ export default {
             } catch (error) {
                 console.log(error);
             }
-            
         },
+
+        /**
+         * Xử lý ẩn hiện form chi tiết
+         * Nguyễn Đăng Quang (04/08/2022)
+         */ 
         showDialog(isShow){
             this.isShowDetail = isShow;
         },
 
+        /**
+         * Hàm in danh sách hiển thị list lên table
+         * Nguyễn Đăng Quang (04/08/2022)
+         */ 
         displayList(list, name) {
             try {
                 return list.map((item) => item[name]).join(",  ");
@@ -306,12 +347,24 @@ export default {
             }
         },
 
+        /**
+         * Xử lý sự kiện click nút xóa 1 hàng
+         * Nguyễn Đăng Quang (04/08/2022)
+         */ 
         deleteRowClick(idRowDelete) {
-            this.isShowConfirmDialog = true;
-            this.idRowDelete = idRowDelete;
-            this.confirmModeDelete = "single";
+            try {
+                this.isShowConfirmDialog = true;
+                this.idRowDelete = idRowDelete;
+                this.confirmModeDelete = "single";
+            } catch (error) {
+                console.log(error);
+            }
         },
 
+        /**
+         * Xử lý sự kiện click nút đồng ý xóa 
+         * Nguyễn Đăng Quang (04/08/2022)
+         */ 
         agreeDelete() {
             try {
                 this.isShowConfirmDialog = false;
@@ -324,7 +377,8 @@ export default {
                     }
                 }
                 me.isLoading = true;
-                fetch("http://localhost:10557/api/Employees" + '/' + me.idRowDelete, option)
+                try {
+                    fetch("http://localhost:10557/api/Employees" + '/' + me.idRowDelete, option)
                     .then(function(response) {
                         return response.json();
                     })
@@ -344,18 +398,31 @@ export default {
                         me.isLoading = false;
     
                     })
-                
+                } catch (error) {
+                    console.log(error);
+                }
             } catch (error) {
                 console.log(error);
             }
         },
 
+        /**
+         * Xử lý sự kiện click nút xóa nhiều dòng
+         * Nguyễn Đăng Quang (04/08/2022)
+         */ 
         deleteMultiRowOnClick() {
-            this.isShowConfirmDialog = true;
-            this.confirmModeDelete = "multiple";
-
+            try {
+                this.isShowConfirmDialog = true;
+                this.confirmModeDelete = "multiple";
+            } catch (error) {
+                console.log(error);
+            }
         },
 
+        /**
+         * Xử lý sự kiện click nút đồng ý xóa nhiều dòng 
+         * Nguyễn Đăng Quang (04/08/2022)
+         */ 
         agreeDeleteMultiRow() {
             try {
                 var me = this;
@@ -370,14 +437,14 @@ export default {
 
                 me.isLoading = true;
                 for(var i=0; i < me.checkedItemID.length; i++) {
-                    fetch("http://localhost:10557/api/Employees" + '/' + me.checkedItemID[i], option)
+                    try {
+                        fetch("http://localhost:10557/api/Employees" + '/' + me.checkedItemID[i], option)
                         .then(function(response) {
                             return response.json();
                         })
                         .then(function() {
-                            // var row_item = document.getElementById(`${me.checkedItemID[i]}`);
-                            // console.log(row_item);
-                            fetch("http://localhost:10557/api/EmployeeDetails/filterDetails?pageSize=100",{method:"GET"})
+                            try {
+                                fetch("http://localhost:10557/api/EmployeeDetails/filterDetails?pageSize=100",{method:"GET"})
                             .then(res=>res.json())
                             .then(res=>{
                                 console.log(res.Data);
@@ -398,11 +465,17 @@ export default {
                             //     //     me.isToastMessage = false;
                             //     // },2000)
                             // }
+                            } catch (error) {
+                                console.log(error);
+                            }
                         })
                         .catch(res=>{
                             console.log(res);
                             me.isLoading = false;
                         })
+                    } catch (error) {
+                        console.log(error);
+                    }
                 }
                 me.isLoading = false;
                 me.isToastMessage = true;
@@ -410,73 +483,140 @@ export default {
                     me.isToastMessage = false;
                 },2000)
                 me.isToastMessage = false;
-                
+
             } catch (error) {
                 console.log(error);
             }
         },
 
+        /**
+         * Xử lý sự kiện tìm kiếm nhân viên
+         * Nguyễn Đăng Quang (04/08/2022)
+         */ 
         search() {
-            this.currentPage = 1;
-            this.getData();
+            try {
+                this.currentPage = 1;
+                this.getData();
+            } catch (error) {
+                console.log(error);
+            }
         },
+
+        /**
+         * Xử lý sự kiện click nút nextPage
+         * Nguyễn Đăng Quang (04/08/2022)
+         */ 
         nextPage() {
-            if(this.totalPage > this.currentPage) {
+            try {
+                if(this.totalPage > this.currentPage) {
                 this.currentPage ++;
                 this.getData();
-            }
-        },
-
-        prevPage() {
-            if(this.currentPage > 1) {
-                this.currentPage --;
-                this.getData();
-            }
-        },
-
-        firstPage() {
-            this.currentPage = 1;
-            this.getData();
-        },
-        
-        lastPage() {
-            this.currentPage = this.totalPage;
-            this.getData();
-        },
-
-        getData() {
-            this.isLoading = true;
-            fetch("http://localhost:10557/api/EmployeeDetails/filterDetails?keyword=" + this.inputSearch + "&pageNumber=" + this.currentPage ,{method:"GET"})
-            .then(res=>res.json())
-            .then(res=>{
-                console.log(res.Data);
-                if(res.TotalCount > 0 ) {
-                    this.employeeDetails = res.Data;
-                    this.totalPage = Math.ceil((res.TotalCount) /100);
-                    this.itemPerPage = this.employeeDetails.length;
                 }
-                this.isLoading = false;
-                console.log(res.TotalCount);
-            })
-            .catch(res=>{
-                console.log(res);
-                this.isLoading = false;
-            })
-        },
-        
-        exportFile() {
-            location.assign("http://localhost:10557/api/EmployeeDetails/ExportFile?keyword=" + this.inputSearch + "&pageNumber=" + this.currentPage)
+            } catch (error) {
+                console.log(error);
+            }
             
         },
 
+        /**
+         * Xử lý sự kiện click nút prevPage
+         * Nguyễn Đăng Quang (04/08/2022)
+         */ 
+        prevPage() {
+            try {
+                if(this.currentPage > 1) {
+                this.currentPage --;
+                this.getData();
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        /**
+         * Xử lý sự kiện click nút firstPage
+         * Nguyễn Đăng Quang (04/08/2022)
+         */ 
+        firstPage() {
+            try {
+                this.currentPage = 1;
+                this.getData();
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        
+        /**
+         * Xử lý sự kiện click nút lastPage
+         * Nguyễn Đăng Quang (04/08/2022)
+         */ 
+        lastPage() {
+            try {
+                this.currentPage = this.totalPage;
+                this.getData();
+            } catch (error) {
+                console.log(error);
+            }
+            
+        },
+
+        /**
+         * Hàm gọi API để lấy dữ liệu
+         * Nguyễn Đăng Quang (04/08/2022)
+         */ 
+        getData() {
+            try {
+                this.isLoading = true;
+                fetch("http://localhost:10557/api/EmployeeDetails/filterDetails?keyword=" + this.inputSearch + "&pageNumber=" + this.currentPage ,{method:"GET"})
+                .then(res=>res.json())
+                .then(res=>{
+                    console.log(res.Data);
+                    if(res.TotalCount > 0 ) {
+                        this.employeeDetails = res.Data;
+                        this.totalPage = Math.ceil((res.TotalCount) /100);
+                        this.itemPerPage = this.employeeDetails.length;
+                    }
+                    this.isLoading = false;
+                    console.log(res.TotalCount);
+                })
+                .catch(res=>{
+                    console.log(res);
+                    this.isLoading = false;
+                })
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        
+        /**
+         * Hàm xuất file excel
+         * Nguyễn Đăng Quang (12/09/2022)
+         */ 
+        exportFile() {
+            try {
+                location.assign("http://localhost:10557/api/EmployeeDetails/ExportFile?keyword=" + this.inputSearch + "&pageNumber=" + this.currentPage);
+            } catch (error) {
+                console.log(error);
+            }
+            
+        },
+
+        /**
+         * Hàm chuyển trang theo ô input 
+         * Nguyễn Đăng Quang (12/09/2022)
+         */ 
         changePage() {
             if(this.totalPage >= this.currentPage && this.currentPage > 0) {
                 this.getData();
             }
         },  
     },
-    // 2. created:
+    
     created() {
+        /**
+         * Gọi API để lấy dữ liệu
+         * Nguyễn Đăng Quang (12/09/2022)
+         */ 
         this.getData();
 
     },

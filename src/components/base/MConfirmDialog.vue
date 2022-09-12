@@ -22,16 +22,32 @@ export default {
     name:"MConfirmDialog",
     props:["confirmModeDelete"],
     methods: {
+        /**
+        * Xử lý sự kiện click đóng dialog
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         btnCloseOnClick() {
-            this.$emit("cancelConfirmDelete");
+            try {
+                this.$emit("cancelConfirmDelete");
+            } catch (error) {
+                console.log(error);
+            }
         },
 
+        /**
+        * Xử lý sự kiện đồng ý xóa
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         agreeDelete() {
-            if(this.confirmModeDelete == "multiple") {
-                this.$emit("agreeDeleteMultiRow");
-            }
-            else if (this.confirmModeDelete == "single") {
-                this.$emit("agreeDelete");
+            try {
+                if(this.confirmModeDelete == "multiple") {
+                    this.$emit("agreeDeleteMultiRow");
+                }
+                else if (this.confirmModeDelete == "single") {
+                    this.$emit("agreeDelete");
+                }
+            } catch (error) {
+                console.log(error);
             }
         },
 

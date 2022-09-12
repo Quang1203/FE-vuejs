@@ -10,13 +10,7 @@ export default {
     components: {EmployeeEmpty},
     data() {
         return {
-            groups: {
-
-            },
-            employee: {
-
-            },
-            employees:[],
+            
         }
     },
 

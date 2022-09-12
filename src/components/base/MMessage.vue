@@ -35,6 +35,10 @@ export default ({
     },
 
     methods: {
+        /**
+        * Hàm ẩn thông báo
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         hideNotice() {
             this.$emit("hideNotice");
         },

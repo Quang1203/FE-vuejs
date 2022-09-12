@@ -31,7 +31,9 @@
             <div class="row dropdown-list_item" style="padding-bottom: 8px; padding-top: 6px; height: 40px; border-bottom: 1px solid #ccc;">
                 <input type="checkbox" class="checkbox-item checkbox-item--all" style="margin-left: 2px;"
                 ref="checkInputAll" 
+                tabindex="7"
                 @change="checkboxChoseAllOnClick" 
+                @keypress.space="checkboxChoseAllOnClick"   
                 :checked="isCheckAll" > 
                 Tất cả
             </div>
@@ -39,6 +41,7 @@
                 class="row dropdown-list_item"
                 :id="item[idName]" 
                 :ref="item[idName]" 
+                tabindex="8"
             >
                 <!-- :class="{'dropdown-list_item--selected': checkedItem.includes(item[idName]) }"  -->
                 <input
@@ -46,6 +49,7 @@
                 :value="item" 
                 :checked="checkedItem.includes(item)" 
                 @change="handleOptionClicked"
+                @keypress.space="handleOptionClicked"
                 v-model="checkedItem" >
                 {{ item[valueName] }}
             </div>
@@ -69,6 +73,10 @@ export default {
         }
     },
     created() {
+        /**
+        * Gọi API để lấy dữ liệu cho combobox
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         if (this.url) {
             fetch(this.url,{method:"GET"})
             .then(res=>res.json())
@@ -84,14 +92,6 @@ export default {
                 console.log(res);
             })
         }
-        // this.checkedItem = this.initialValue;
-        // this.selectedItemID = this.checkedItem;
-        // console.log(this.initialValue.length);
-        // console.log(this.items.length);
-        // this.isCheckAll = (this.initialValue.length == this.items.length);
-        // console.log(this.checkedItem);
-        // console.log(this.isCheckAll);
-        // console.log(this.selectedItemID);
     },
     watch: {
         // idValue() {
@@ -104,7 +104,6 @@ export default {
         //     this.optionSelected = [];
         //     this.optionSelected.push(this.displayValue) ;
         //     console.log(this.optionSelected);   
-            
         // },
         checkedItem(value) {
             // console.log(this.$refs.checkInputAll); 
@@ -119,56 +118,89 @@ export default {
                 // console.log(this.items);
                 this.selectedItemID = value;
                 this.optionSelected = [];
-                // this.$emit("getValue", this.checkedItem);  
-                
+                // this.$emit("getValue", this.checkedItem);   
             }
-
         }
     },
     
-    beforeUpdate() {
-        // if (this.url) {
-        //     // this.getData();
-        //     this.selectedItemID = [];
-        //     this.selectedItemID.push(this.optionSelected[this.idName]);
-            // this.selectedItemID = [];
-            // this.optionSelected = { ...this.initialValue };
-            // this.selectedItemID.push(this.optionSelected[this.idName]);
-
-        //     console.log({ ...this.initialValue });
-        // }
-
-    },
 
     methods: {
+        /**
+        * Gọi API để lấy dữ liệu cho combobox
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         getData() {
-            fetch(this.url,{method:"GET"})
-            .then(res=>res.json())
-            .then(res=>{
-                this.items = res;
-                console.log(this.items.length);
+            try {
+                fetch(this.url,{method:"GET"})
+                .then(res=>res.json())
+                .then(res=>{
+                    this.items = res;
+                    console.log(this.items.length);
 
-            })
-            .catch(res=>{
-                console.log(res);
-            })
+                })
+                .catch(res=>{
+                    console.log(res);
+                })
+            } catch (error) {
+                console.log(error);
+            }
         },
+
+        /**
+        * Hàm bỏ chọn tất cả lựa chọn
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         removeAllOption() {
-            this.isCheckAll = false;
-            this.selectedItemID = [];
-            this.checkedItem = [];
-            this.$emit("getValue", this.checkedItem);  
+            try {
+                this.isCheckAll = false;
+                this.selectedItemID = [];
+                this.checkedItem = [];
+                this.$emit("getValue", this.checkedItem);  
+            } catch (error) {
+                console.log(error);
+            }
         },
-        handleFocusOut() {
-            this.isShowOptions = false;
-        },
-        toggleOptions() {
-            this.isShowOptions = !this.isShowOptions;
-        },
-        handleOptionClicked() {
-            this.$emit("getValue", this.checkedItem);  
 
+        /**
+        * Hàm bỏ focus
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
+        handleFocusOut() {
+            try {
+                this.isShowOptions = false;
+            } catch (error) {
+                console.log(error);
+            }
         },
+
+        /**
+        * Hàm ẩn hiện dropdown
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
+        toggleOptions() {
+            try {
+                this.isShowOptions = !this.isShowOptions; 
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        /**
+        * Hàm chọn lựa chọn
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
+        handleOptionClicked() {
+            try {
+                this.$emit("getValue", this.checkedItem);      
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
+        /**
+        * Hàm chọn checkbox chọn tất cả
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
         checkboxChoseAllOnClick() {
             try {
                 this.checkedItem= [];
@@ -188,12 +220,19 @@ export default {
                 console.log(error);
             }
         },
-        removeOption(option) {
-            // this.checkedItem.pop(option);
-            this.checkedItem= this.checkedItem.filter(item => item !== option);
-            this.selectedItemID=this.selectedItemID.filter(i => i !== option[this.idName]);  
-            this.$emit("getValue", this.checkedItem);  
 
+        /**
+        * Hàm bỏ chọn 1 lựa chọn
+        * Author: Nguyễn Đăng Quang (09/09/2022)
+        */
+        removeOption(option) {
+            try {
+                this.checkedItem= this.checkedItem.filter(item => item !== option);
+                this.selectedItemID=this.selectedItemID.filter(i => i !== option[this.idName]);  
+                this.$emit("getValue", this.checkedItem); 
+            } catch (error) {
+                console.log(error);
+            }
         },
 
     },
