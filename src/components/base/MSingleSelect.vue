@@ -1,23 +1,24 @@
 <template>
     <div class="dropdown" style="flex:1; display: flex;" 
     :style="{ width: width || '200px' }"
-    @keypress.tab="handleFocusOut"
+    @keyup.tab="handleFocusOut"
+    @keyup.down="focusOptionNext"
     >
         <div @click="toggleOptions"  class="dropdown-select" >
-            <input tabindex="5" class="select" v-model="optionSelected[valueName]"
+            <input ref="input" tabindex="5" class="select" v-model="optionSelected[valueName]"
             @keypress.enter="toggleOptions"
-            @keypress.tab="handleFocusOut"
-            @keypress.down="focusOptionNext"
+            @keyup.tab="handleFocusOut"
+            @keyup.down="handleOptionClicked(items[i++])"
             >
             <i class="fa-solid fa-angle-down" style="color: #999999; font-size: 15px"></i>
-            <div v-show="isShowOptions" class="dropdown-list" id="drop-room__list" style="z-index: 2 ;"
+            <div ref="dropdown" @click="toggleOptions" v-show="isShowOptions" class="dropdown-list" id="drop-room__list" style="z-index: 2 ;"
             >
                 <div v-for="(item, index) in items" :key="item[idName]"
                     class="row dropdown-list_item"
                     ref="item" 
                     @click="handleOptionClicked(item)"
-                    @keypress.enter="handleOptionClicked(item)"
-                    @keypress.esc="focusOptionNext(index)"
+                    @keyup.enter="handleOptionClicked(item)"
+                    @keyup.esc="focusOptionNext(index)"
                     :id="item[idName]"
                     :class="{'dropdown-list_item--selected': selectedItemID.includes(item[idName]) }">
                     {{ item[valueName] }}
@@ -29,6 +30,8 @@
 </template>
 
 <script>
+import RESOURCE from "../../script/resource.js"
+
 export default {
     name: "MCombobox",
     props: ["idName", "valueName", "url", "width", "initialValue"],
@@ -40,6 +43,7 @@ export default {
             selectedItemID:[],
             hideListSelect : true,
             hoveredOptionIndex: 0,
+            i:0,
         }
     },
 
@@ -63,6 +67,11 @@ export default {
             this.selectedItemID.push(this.optionSelected[this.idName]);
             
         },
+        i(val) {
+            if(val == 5 ) {
+                this.i = 0;
+            }
+        }
     },
 
     methods: {
@@ -72,7 +81,7 @@ export default {
         */
         getData() {
             try {
-                fetch(this.url,{method:"GET"})
+                fetch(this.url,{method:RESOURCE.METHOD.Get})
                 .then(res=>res.json())
                 .then(res=>{
                     this.items = res;
@@ -129,19 +138,27 @@ export default {
             }
         },
 
+
         /**
         * Hàm focus vào lựa chọn tiếp theo
         * Author: Nguyễn Đăng Quang (09/09/2022)
         */
         focusOptionNext() {
             try {
-                this.$refs.item[0].focus();
+                this.isShowOptions = true;
+                this.$refs.dropdown.focus();
+                console.log(this.$refs.dropdown);
+                const opres = this.$refs.item[0] ;
+                opres.focus();
+                console.log(this.$refs.item[0]);
             } catch (error) {
                 console.log(error);
             }
         },
 
     },
+
+    
 }
 </script>
 

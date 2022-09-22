@@ -1,16 +1,16 @@
 <template>
     <div class="header">
             <div class="header__left">
-                <div class="header-left__icon-bar">
+                <div class="header-left__icon-bar" title="Danh mục chức năng">
                     <i class="fa-solid fa-bars"></i>
                 </div>
                 <span class="title">Cán bộ, giáo viên</span>
-                <div class="header-left__icon-help">
+                <div class="header-left__icon-help" title="Trợ giúp">
                     <i class="fa-regular fa-circle-question"></i>
                 </div>
             </div>
             <div class="header__right">
-                <div class="header__notification">
+                <div class="header__notification" title="Thông báo">
                     <i class="fa-regular fa-bell"></i>
                     <span class="header__notification--new">
                     </span>

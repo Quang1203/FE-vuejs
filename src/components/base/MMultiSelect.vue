@@ -1,5 +1,7 @@
 <template>
-    <div @keypress.enter="toggleOptions" class="dropdown" style="flex:1" 
+    <div class="dropdown" style="flex:1" 
+    @keypress.enter="toggleOptions"   
+    @keyup.down="focusCheckAll"
     :style="{ width: width || '200px' }" tabindex="6"
     >
     <!-- @focusout="handleFocusOut" -->
@@ -32,20 +34,24 @@
                 <input type="checkbox" class="checkbox-item checkbox-item--all" style="margin-left: 2px;"
                 ref="checkInputAll" 
                 tabindex="7"
-                @change="checkboxChoseAllOnClick" 
-                @keypress.space="checkboxChoseAllOnClick"   
+                @change="checkboxChoseAllOnClick"  
+                @keyup.down="focusCheckFirst"
                 :checked="isCheckAll" > 
                 Tất cả
             </div>
             <div v-for="(item) in items" :key="item[idName]"
                 class="row dropdown-list_item"
-                :id="item[idName]" 
                 :ref="item[idName]" 
                 tabindex="8"
-            >
+                @keydown="pushOptionClicked(item)"
+
+                >
+                <!-- :id="item[idName]"  -->
                 <!-- :class="{'dropdown-list_item--selected': checkedItem.includes(item[idName]) }"  -->
                 <input
+                ref="inputCheck"
                 class="checkbox-item" type="checkbox"  style="margin-left: 2px ;"
+                :id="item[idName]" 
                 :value="item" 
                 :checked="checkedItem.includes(item)" 
                 @change="handleOptionClicked"
@@ -59,6 +65,8 @@
 </template>
 
 <script>
+import RESOURCE from "../../script/resource.js"
+
 export default {
     name: "MMultiSelect ",
     props: ["idName", "valueName", "url", "width", "idValue","displayValue", "initialValue"],
@@ -78,7 +86,7 @@ export default {
         * Author: Nguyễn Đăng Quang (09/09/2022)
         */
         if (this.url) {
-            fetch(this.url,{method:"GET"})
+            fetch(this.url,{method:RESOURCE.METHOD.Get})
             .then(res=>res.json())
             .then(res=>{
                 this.items = res;
@@ -131,7 +139,7 @@ export default {
         */
         getData() {
             try {
-                fetch(this.url,{method:"GET"})
+                fetch(this.url,{method:RESOURCE.METHOD.Get})
                 .then(res=>res.json())
                 .then(res=>{
                     this.items = res;
@@ -234,6 +242,28 @@ export default {
                 console.log(error);
             }
         },
+
+        focusCheckAll() {
+            this.$refs.checkInputAll.focus();
+        },
+
+        focusCheckFirst() {
+            document.getElementById(`${this.items[0][this.idName]}`).onfocus;
+            console.log(this.items[0][this.idName]);
+
+        },
+
+        // pushOptionClicked(item) {
+        //     if(this.checkedItem.includes(item)) {
+        //         this.checkedItem= this.checkedItem.filter(i => i !== item);
+        //         this.selectedItemID=this.selectedItemID.filter(j => j !== item[this.idName]);  
+        //         this.$emit("getValue", this.checkedItem); 
+        //     } else {
+        //         this.checkedItem.push(item);
+        //         this.selectedItemID.push(item[this.idName]);
+        //         this.$emit("getValue", this.checkedItem); 
+        //     }
+        // }
 
     },
 }

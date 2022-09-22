@@ -1,7 +1,7 @@
 <template>
     <div class="dialog dialog--warning">
         <div class="dialog__content">
-            <div class="dialog__button--close" @click="hideNotice"></div>
+            <div class="dialog__button--close" @click="hideNotice" title="Đóng"></div>
             <div class="dialog__header title" style="padding:20px 0 12px 24px; color: var(--text-color) ;">Thông báo</div>
             <div class="dialog__body" v-for="(item) in validates" :key="item">
                 <div class="dialog__msg-item">

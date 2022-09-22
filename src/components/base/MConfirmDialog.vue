@@ -2,7 +2,7 @@
     <!-- Dialog Confirm Delete -->
     <div id="dialogConfirmDelete" class="dialog dialog--Confirm" >
         <div class="dialog__content">
-            <div @click="btnCloseOnClick" class="dialog__button--close"></div>
+            <div @click="btnCloseOnClick" class="dialog__button--close" title="Đóng"></div>
             <div class="dialog__header title" style="padding:20px 0 12px 24px; color: var(--text-color) ;">Thông báo</div>
             <div class="dialog__body">
                 <div class="dialog__msg-item">
@@ -18,6 +18,8 @@
 </template>
 
 <script>
+
+import ENUM from "../../script/enum.js"
 export default {
     name:"MConfirmDialog",
     props:["confirmModeDelete"],
@@ -40,10 +42,10 @@ export default {
         */
         agreeDelete() {
             try {
-                if(this.confirmModeDelete == "multiple") {
+                if(this.confirmModeDelete == ENUM.FORM_MODE.DeleteMultiple) {
                     this.$emit("agreeDeleteMultiRow");
                 }
-                else if (this.confirmModeDelete == "single") {
+                else if (this.confirmModeDelete == ENUM.FORM_MODE.DeleteOne) {
                     this.$emit("agreeDelete");
                 }
             } catch (error) {

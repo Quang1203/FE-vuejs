@@ -20,6 +20,7 @@
     min-width: 300px;
     min-height: 80px;
     background-color: #ffffff;
+    animation: fadeIn ease-in 0.2s;
 
 }
 
@@ -85,4 +86,14 @@
 }
 .toast-item--info .toast-icon, .toast-item--info  .toast-close{
     color: #2173d1 ;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }

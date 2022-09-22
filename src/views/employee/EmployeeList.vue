@@ -5,18 +5,18 @@
     <div v-else class="content" >
         <div class="page__header">
             <div class="page__header--left">
-                <input type="text" class="input input__icon input__icon--search" placeholder="Tìm kiếm theo Mã hoặc Tên hoặc SĐT" style="width : 300px"
+                <input type="text" class="input input__icon input__icon--search" title="Ấn Enter để tìm kiếm" placeholder="Tìm kiếm theo Mã hoặc Tên hoặc SĐT" style="width : 300px"
                 @keyup.enter="search"
                 v-model="inputSearch"
                 ref="firstFocus" 
                 >
             </div>
             <div class="page__header--right">
-                <button @click="btnAddOnClick"  id="btnAdd" class="button">Thêm</button> 
-                <button @click="exportFile" class="button button-basic--white">Xuất khẩu</button> 
-                <button @click="showDeleteChose" id="btnShowDelete" class="button-small btn-selectDelete"><i class="fa-solid fa-ellipsis"></i></button>
+                <button @click="btnAddOnClick"  id="btnAdd" class="button" title="Thêm cán bộ, giáo viên">Thêm</button> 
+                <button @click="exportFile" class="button button-basic--white" title="Xuất file excel">Xuất khẩu</button> 
+                <button @click="showDeleteChose" id="btnShowDelete" class="button-small btn-selectDelete" title="Chọn chức năng"><i class="fa-solid fa-ellipsis"></i></button>
                 <div v-if="isShowDeleteChose" class="showDeleteChose">
-                    <button @click="deleteMultiRowOnClick" id="btnDeleteChose" class="button-small btnDeleteChose"><i class="fa-solid fa-trash-can"></i></button>
+                    <button @click="deleteMultiRowOnClick" id="btnDeleteChose" class="button-small btnDeleteChose" title="Xóa các nhân viên được chọn"><i class="fa-solid fa-trash-can"></i></button>
                     <label for="">Xóa</label>
                 </div>
             </div>
@@ -26,38 +26,38 @@
                 <table id="tbEmployeeList" class="table" border="0">
                     <thead>
                         <tr>
-                            <th class="text-align--center" style="width:40px"><input ref="checkInputAll" @change="checkboxChoseAllOnClick" :checked="isCheckAll" type="checkbox" class="checkbox-item checkbox-item--all"></th>
-                            <th class="text-align--center" style="width:100px">Số hiệu cán bộ</th>
-                            <th class="text-align--center" style="width:250px">Họ và tên</th>
-                            <th class="text-align--center" style="width:100px">Số điện thoại</th>
-                            <th class="text-align--center" style="width:175px">Tổ chuyên môn</th>
-                            <th class="text-align--center" style="width:100px">QL theo môn</th>
-                            <th class="text-align--center" style="width:200px">QL theo kho, phòng</th>
-                            <th class="text-align--center" style="width:120px">Đào tạo QLTB</th>
-                            <th class="text-align--center" style="width:120px">Đang làm việc</th>
+                            <th class="text-align--center" style="width:40px"><input title="Chọn tất cả cán bộ, giáo viên" ref="checkInputAll" @change="checkboxChoseAllOnClick" :checked="isCheckAll" type="checkbox" class="checkbox-item checkbox-item--all"></th>
+                            <th class="text-align--center" style="width:100px" title="Số hiệu cán bộ"><b>Số hiệu cán bộ</b></th>
+                            <th class="text-align--center" style="width:250px" title="Họ và tên"><b>Họ và tên</b> </th>
+                            <th class="text-align--center" style="width:100px" title="Số điện thoại"><b>Số điện thoại</b> </th>
+                            <th class="text-align--center" style="width:175px" title="Tổ chuyên môn"><b>Tổ chuyên môn</b> </th>
+                            <th class="text-align--center" style="width:100px" title="Môn học đang quản lý"><b>QL theo môn</b> </th>
+                            <th class="text-align--center" style="width:200px" title="Kho, phòng đang quản lý"><b>QL theo kho, phòng</b> </th>
+                            <th class="text-align--center" style="width:120px" title="Trình độ nghiệp vụ quản lý thiết bị"><b>Đào tạo QLTB</b> </th>
+                            <th class="text-align--center" style="width:120px" title="Trình trạng làm việc"><b>Đang làm việc</b> </th>
                             <th class="text-align--right" style="width:100px"></th>
                         </tr>
                     </thead>
                     <tbody v-for="(item) in employeeDetails" :key="item.employee.EmployeeID" @dblclick="rowOnDblClick(item)" >
                         <tr :id="item.employee.EmployeeID" :ref="item.employee.EmployeeID" :class="{'row--selected': checkedItemID.includes(item.employee.EmployeeID) }">
-                            <td class="text-align--center" style="width:40px"><input :value="item.employee.EmployeeID" :checked="checkedItemID.includes(item.employee.EmployeeID) " v-model="checkedItemID" type="checkbox" class="checkbox-item"></td>
-                            <td class="text-align--center" style="width:100px">{{item.employee.EmployeeCode}}</td>
-                            <td @click="rowOnDblClick(item)" class="text-align--left" style="width:250px; color: var(--main-color);">{{item.employee.EmployeeName}}</td>
-                            <td class="text-align--center" style="width:100px">{{item.employee.TelNumber}}</td>
-                            <td class="text-align--left" style="width:175px">{{item.employee.GroupName}}</td>
-                            <td class="text-align--left" style="width:100px">
+                            <td class="text-align--center" style="width:40px"><input :value="item.employee.EmployeeID" :checked="checkedItemID.includes(item.employee.EmployeeID) " v-model="checkedItemID" type="checkbox" class="checkbox-item" title="Chọn cán bộ, giáo viên"></td>
+                            <td class="text-align--left" style="width:100px">{{item.employee.EmployeeCode}}</td>
+                            <td @click="rowOnDblClick(item)" class="text-align--left text-long" style="max-width:150px; color: var(--main-color);" title="Click để chỉnh sửa">{{item.employee.EmployeeName}}</td>
+                            <td class="text-align--left" style="width:100px">{{item.employee.TelNumber}}</td>
+                            <td class="text-align--left text-long" style="max-width:175px">{{item.employee.GroupName}}</td>
+                            <td class="text-align--left text-long" style="max-width:150px">
                                 <!-- <span v-for="(i) in item.ListSubject" :key="i.SubjectID">{{i.SubjectName}} &nbsp;</span>  -->
                                 {{ displayList(item.ListSubject, "SubjectName") }}
                             </td>
-                            <td class="text-align--left" style="width:200px">
+                            <td class="text-align--left text-long" style="max-width:250px">
                                 <!-- <span v-for="(i) in item.ListStorageRoom" :key="i.StorageRoomID">{{i.StorageRoomName}} &nbsp;</span>  -->
                                 {{ displayList(item.ListStorageRoom, "StorageRoomName") }}
                             </td>
                             <td :class="{'icon-checked' : (item.employee.EMT == 1)}" class="text-align--center" style="width:120px"></td>
                             <td :class="{'icon-checked' : (item.employee.WorkStatus == 1)}" class="text-align--center" style="width:120px"></td>
                             <td class="text-align--center" style="width:100px">
-                                <button @click="rowOnDblClick(item)" class="button-small"><i class="fa-solid fa-pen"></i></button>
-                                <button @click="deleteRowClick(item.employee.EmployeeID)" class="button-small"><i class="fa-solid fa-trash-can"></i></button>
+                                <button @click="rowOnDblClick(item)" title="Chỉnh sửa cán, giáo viên" class="button-small text-align--center"><i class="fa-solid fa-pen"></i></button>
+                                <button @click="deleteRowClick(item.employee.EmployeeID)" title="Xóa cán, giáo viên" class="button-small text-align--center"><i class="fa-solid fa-trash-can" style="color: var(--text-color);"></i></button>
                             </td>
                         </tr>
                     </tbody>
@@ -65,15 +65,15 @@
             </div>
             <div class="table__paging">
                 <div class="table__paging--first">
-                    <button @click="firstPage" class="paging__button paging__button--first"></button>
-                    <button @click="prevPage" class="paging__button paging__button--prev"></button>
+                    <button :class="{'button--disable': (currentPage === 1)}" @click="firstPage" class="paging__button paging__button--first" title="Về trang đầu"></button>
+                    <button :class="{'button--disable': (currentPage === 1)}" @click="prevPage" class="paging__button paging__button--prev" title="Về trang trước"></button>
                     <div class="paging__input--group">
-                        <input type="text" class="paging__number-page text-align--center" 
+                        <input type="text" class="paging__number-page text-align--center"  title="Nhập trang cần tìm"
                         v-model="currentPage"
                         @keyup.enter="changePage">
                     </div>
-                    <button @click="nextPage" class="paging__button paging__button--next"></button>
-                    <button @click="lastPage" class="paging__button paging__button--last"></button>
+                    <button :class="{'button--disable': (currentPage === totalPage)}" @click="nextPage" class="paging__button paging__button--next" title="Sang trang tiếp"></button>
+                    <button :class="{'button--disable': (currentPage === totalPage)}" @click="lastPage" class="paging__button paging__button--last" title="Sang trang cuối"></button>
                 </div>
                 <div class="table__paging--second">
                     <span>{{currentPage}}/{{totalPage}} trang</span>({{itemPerPage}} giáo viên)
@@ -110,6 +110,8 @@ import MLoading from "../../components/base/MLoading.vue";
 import MToastMessage from "../../components/base/MToastMessage.vue"
 import MConfirmDialog from "../../components/base/MConfirmDialog.vue"
 import EmployeeEmpty from  "./EmployeeEmpty.vue";
+import RESOURCE from "../../script/resource.js";
+import ENUM from "../../script/enum.js"
 
 export default {
     name: "EmployeeList",
@@ -120,7 +122,7 @@ export default {
             ],
             employeeSelected: {},
             isShowDetail: false,
-            formMode : "POST",
+            formMode : ENUM.FORM_MODE.Add,
             isLoading: false,
             isToastMessage: false,
             isShowDeleteChose: false,
@@ -176,11 +178,12 @@ export default {
          */ 
         btnAddOnClick(){
             try {
+                this.employeeSelected = {};
                 this.employeeSelected.employee = {};
                 this.employeeSelected.ListSubject = [];
                 this.employeeSelected.ListStorageRoom = [];
                 this.showDialog(true);
-                this.formMode = "POST";
+                this.formMode = ENUM.FORM_MODE.Add;
                 console.log(this.formMode);
 
             } catch (error) {
@@ -227,21 +230,20 @@ export default {
         saveButtonOnClick() {
             var me = this;
             var emp = me.employeeSelected;
-            console.log(emp);
             var option ;
             
             // Form thêm
-            if (me.formMode == "POST") {
+            if (me.formMode == ENUM.FORM_MODE.Add) {
                 option = {
-                    method: 'POST',
+                    method: RESOURCE.METHOD.Post,
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': RESOURCE.HEADERS_METHOD.ContentType
                     },
                     body: JSON.stringify(emp)
                 }
                 me.isLoading = true;
                 try {
-                    fetch("http://localhost:10557/api/EmployeeDetails/Detail", option)
+                    fetch(RESOURCE.API.EmployeeDetails, option)
                     .then(function(response) {
                         return response.json();
                     })
@@ -258,7 +260,7 @@ export default {
                         me.getData();
                     })
                     .catch((error) => {
-                        console.error('Error:', error);
+                        console.log(error);
                         me.isLoading = false;
                     }) 
                 } catch (error) {
@@ -268,16 +270,16 @@ export default {
             } else {
                 //Form sửa
                 option = {
-                    method: 'PUT',
+                    method: RESOURCE.METHOD.Put,
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': RESOURCE.HEADERS_METHOD.ContentType
                     },
                     body: JSON.stringify(emp)
                 }
                 console.log(emp);
                 me.isLoading = true;
                 try {
-                    fetch("http://localhost:10557/api/EmployeeDetails/Detail" + '/' + me.employeeSelected.employee.EmployeeID, option)
+                    fetch(RESOURCE.API.EmployeeDetails + '/' + me.employeeSelected.employee.EmployeeID, option)
                     .then(function(response) {
                         return response.json();
                     })
@@ -287,6 +289,9 @@ export default {
                         setTimeout(() => {
                             me.isToastMessage = false;
                         },2000)
+                    })
+                    .then(function() {
+                        me.getData();
                     })
                     .catch((error) => {
                         console.error('Error:', error);
@@ -320,7 +325,7 @@ export default {
             try {
                 this.isShowDetail = true;
                 this.employeeSelected = emp;
-                this.formMode = "PUT";
+                this.formMode = RESOURCE.METHOD.Put;
                 console.log(emp);
             } catch (error) {
                 console.log(error);
@@ -355,7 +360,7 @@ export default {
             try {
                 this.isShowConfirmDialog = true;
                 this.idRowDelete = idRowDelete;
-                this.confirmModeDelete = "single";
+                this.confirmModeDelete = ENUM.FORM_MODE.DeleteOne;
             } catch (error) {
                 console.log(error);
             }
@@ -371,14 +376,14 @@ export default {
 
                 var me = this;
                 var option = {
-                    method: 'DELETE',
+                    method: RESOURCE.METHOD.Delete,
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': RESOURCE.HEADERS_METHOD.ContentType
                     }
                 }
                 me.isLoading = true;
                 try {
-                    fetch("http://localhost:10557/api/Employees" + '/' + me.idRowDelete, option)
+                    fetch(RESOURCE.API.Employees + '/' + me.idRowDelete, option)
                     .then(function(response) {
                         return response.json();
                     })
@@ -413,7 +418,7 @@ export default {
         deleteMultiRowOnClick() {
             try {
                 this.isShowConfirmDialog = true;
-                this.confirmModeDelete = "multiple";
+                this.confirmModeDelete = ENUM.FORM_MODE.DeleteMultiple;
             } catch (error) {
                 console.log(error);
             }
@@ -429,22 +434,23 @@ export default {
                 me.isShowConfirmDialog = false;
                 me.isShowDeleteChose = false;
                 var option = {
-                    method: 'DELETE',
+                    method: RESOURCE.METHOD.Delete,
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': RESOURCE.HEADERS_METHOD.ContentType
                     }
                 }
 
                 me.isLoading = true;
                 for(var i=0; i < me.checkedItemID.length; i++) {
                     try {
-                        fetch("http://localhost:10557/api/Employees" + '/' + me.checkedItemID[i], option)
+                        fetch(RESOURCE.API.Employees + '/' + me.checkedItemID[i], option)
                         .then(function(response) {
                             return response.json();
                         })
                         .then(function() {
                             try {
-                                fetch("http://localhost:10557/api/EmployeeDetails/filterDetails?pageSize=100",{method:"GET"})
+                            me.isToastMessage = true;
+                            fetch(RESOURCE.API.EmployeesFilter + "?pageSize=100",{method:RESOURCE.METHOD.Get})
                             .then(res=>res.json())
                             .then(res=>{
                                 console.log(res.Data);
@@ -456,15 +462,6 @@ export default {
                                 this.isLoading = false;
 
                             })
-
-                            // if(row_item) {
-                            //     row_item.remove();
-                            //     me.isLoading = false;
-                            //     // me.isToastMessage = true;
-                            //     // setTimeout(() => {
-                            //     //     me.isToastMessage = false;
-                            //     // },2000)
-                            // }
                             } catch (error) {
                                 console.log(error);
                             }
@@ -472,6 +469,7 @@ export default {
                         .catch(res=>{
                             console.log(res);
                             me.isLoading = false;
+                            me.isToastMessage = false;
                         })
                     } catch (error) {
                         console.log(error);
@@ -497,6 +495,8 @@ export default {
             try {
                 this.currentPage = 1;
                 this.getData();
+                this.isCheckAll = false;
+                this.checkedItemID = [];
             } catch (error) {
                 console.log(error);
             }
@@ -511,6 +511,8 @@ export default {
                 if(this.totalPage > this.currentPage) {
                 this.currentPage ++;
                 this.getData();
+                this.isCheckAll = false;
+                this.checkedItemID = [];
                 }
             } catch (error) {
                 console.log(error);
@@ -527,6 +529,8 @@ export default {
                 if(this.currentPage > 1) {
                 this.currentPage --;
                 this.getData();
+                this.isCheckAll = false;
+                this.checkedItemID = [];
                 }
             } catch (error) {
                 console.log(error);
@@ -541,6 +545,8 @@ export default {
             try {
                 this.currentPage = 1;
                 this.getData();
+                this.isCheckAll = false;
+                this.checkedItemID = [];
             } catch (error) {
                 console.log(error);
             }
@@ -554,6 +560,8 @@ export default {
             try {
                 this.currentPage = this.totalPage;
                 this.getData();
+                this.isCheckAll = false;
+                this.checkedItemID = [];
             } catch (error) {
                 console.log(error);
             }
@@ -567,7 +575,7 @@ export default {
         getData() {
             try {
                 this.isLoading = true;
-                fetch("http://localhost:10557/api/EmployeeDetails/filterDetails?keyword=" + this.inputSearch + "&pageNumber=" + this.currentPage ,{method:"GET"})
+                fetch(RESOURCE.API.EmployeesFilter +"?keyword=" + this.inputSearch + "&pageNumber=" + this.currentPage ,{method:RESOURCE.METHOD.Get})
                 .then(res=>res.json())
                 .then(res=>{
                     console.log(res.Data);
@@ -594,7 +602,7 @@ export default {
          */ 
         exportFile() {
             try {
-                location.assign("http://localhost:10557/api/EmployeeDetails/ExportFile?keyword=" + this.inputSearch + "&pageNumber=" + this.currentPage);
+                location.assign(RESOURCE.API.EmployeesExportFile + "?keyword=" + this.inputSearch + "&pageNumber=" + this.currentPage);
             } catch (error) {
                 console.log(error);
             }
@@ -608,6 +616,8 @@ export default {
         changePage() {
             if(this.totalPage >= this.currentPage && this.currentPage > 0) {
                 this.getData();
+                this.isCheckAll = false;
+                this.checkedItemID = [];
             }
         },  
     },
@@ -625,5 +635,17 @@ export default {
 
 <style scoped>
     @import url("../../styles/layout/content.css");
+
+    .text-long {
+        /* overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        height: 40px; */
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
 </style>
 

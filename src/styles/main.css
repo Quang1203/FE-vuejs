@@ -57,11 +57,11 @@
     src: url(../assets/fonts/OpenSans-Italic.ttf);
 }
 
-@media screen and (max-width:1024px) {
+/* @media screen and (max-width:1024px) {
     .menu {
         display: none
     }
-}
+} */
 
 /* Responsive */
 html {
